@@ -1,0 +1,239 @@
+\documentclass[12pt,a4paper,portuguese]{article}
+
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\hypersetup{
+	hidelinks,
+	linkcolor = blue
+} % Changes the link color to black and hides the hideous red border that usually is created
+
+\begin{document}
+
+    % Título
+    \vspace{5mm}
+    \rule{0.95\textwidth}{1pt}
+    \vspace{3mm}
+    \begin{center}
+        \textbf{\huge Parceiros de Trabalho} \\
+        \Large Trabalho 1 \\
+        \large SCC0223 Estruturas de Dados I
+    
+        \vspace{8mm}
+        \begin{tabular}{rcl}
+            Cody Stefano Barham Setti &-- &4856322 \\
+            Luís Henrique de Queiroz Veras &-- &14592414 \\
+            Raphael Mendes Batista &-- &15497660 \\
+            Vinícius de Sá Ferreira &-- &15491650 \\
+        \end{tabular}
+
+    \vspace{8mm}
+    29 de Outubro de 2024
+    \end{center}
+
+    \vspace{1mm}
+    \rule{0.95\textwidth}{1pt}
+    \vspace{0.5cm}
+
+    % Corpo do texto
+    \section{Descrição do Trabalho Feito}
+    \subsection{O tipo \texttt{UserList}}
+    Para desenvolver um sistema de rede social para parcerias de trabalho, a estrutura basilar utilizada foi uma lista dos usuários, denominada \verb|UserList|.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[height=5cm]{imagens/Comunidade.png}
+        \caption{O tipo de dado \texttt{UserList}}\label{fig:Comunidade}
+    \end{figure}
+    A lista é dinâmica e encadeada, formada por uma sequência de nós, cada um munido de um apontador, a fim de guiar-nos ao próximo. O tipo de nó particular utilizado foi o registro \verb|Usuario|. Um tipo de dado composto, desenvolvido pelos integrantes do grupo.
+    
+    Por hora, apenas basta saber que tal dado possui uma variável de ponteiro, especificamente para armazenar o endereço de memória de outra variável do tipo \verb|Usuario|, a qual cumpre o papel de apontador. Na próxima seção será explicitado e explicado este tipo de dado.
+
+    \subsection{O tipo \texttt{Usuario}}
+    Agora, desvendemos o tipo \verb|User|.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[height=9.5cm]{imagens/UserStringQueueStack.png}
+        \caption{O tipo de dado \texttt{User}}\label{fig:UserStringQueueStack}
+    \end{figure}
+    Dentro dele, há uma variável \verb|name|, um ponteiro que aponta ao primeiro caractere de uma string, utilizada para armazenar o nome do dado usuário, e outra de mesmo tipo, \verb|nickname|, para referenciar seu apelido. Na imagem acima, há o exemplo de um usuário de nome \verb|Davi| e apelido \verb|Caveira|.
+
+    Ademais, há dois ponteiros, \verb|partners| e \verb|requests|, que apontam a variáveis do tipo \verb|StringQueue|, que será explicado na seção seguinte. Por hora, o importante é saber que essas são filas cujos elementos são strings. As filas apontadas por \verb|partners| e \verb|requests| servem para -- respectivamente -- armazenar os apelidos dos parceiros de \verb|Caveira| e os daqueles que almejam formar uma parceria com ele.
+
+    Por fim, há o ponteiro \verb|messages|, que aponta a uma variável do tipo \verb|StringStack|, que será explicada juntamente à \verb|StringQueue|. Neste momento, basta salientar que tal tipo é uma pilha cujos elementos são strings. Tal pilha é aproveitada para armazenar as mensagens enviadas a \verb|Caveira| por seus parceiros de trabalho.
+
+    \subsection{Os tipos \texttt{StringQueue} e \texttt{StringStack}}
+    Tanto a fila \verb|StringQueue| quanto a pilha \verb|StringStack| foram definidas como sendo listas homogêneas dinâmicas e simplesmente encadeadas.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[height=9.5cm]{imagens/UserStringNodes.png}
+        \caption{Os tipos de dado \texttt{StringQueue} e \texttt{StringStack}}\label{fig:UserStringNodes}
+    \end{figure}
+    Como vê-se na figura acima, a fila possui ponteiros para indicar primeiro e último elemento -- \verb|first| e \verb|last|. Para a pilha, entretanto, basta um ponteiro para indicar seu topo -- \verb|last|.
+
+    Ademais, ambas compartilham o mesmo tipo de nó: o tipo de dado \verb|StringNode|. Vejamos logo em seguida tal tipo.
+
+    \subsection{O tipo \texttt{StringNode}}
+    O nó \verb|StringNode| é um registro composto de duas variáveis:
+    \begin{enumerate}
+        \item \verb|str|: a variável \verb|str| é a essência do tipo \verb|StringNode|. É um ponteiro que aponta para variáveis do tipo \verb|char|. Esse ponteiro serve uma gama de funções, aponta ao primeiro caractere do nome e apelido de um usuário, como também do apelido de um parceiro, do de um solicitante de parceria e, finalmente, ao primeiro caractere de uma mensagem recebida.
+        \item \verb|point|: um ponteiro que aponta para outras variáveis do tipo \verb|StringNode|. Utilizado para fazer o encadeamento tanto nas filas do tipo \verb|StringQueue| quanto nas pilhas do tipo \verb|StringStack|.
+    \end{enumerate}
+    Vejamo-no em ação, removendo assim o último encapsulamento do funcionamento do nó \verb|User|.    \begin{figure}[H]
+        \centering
+        \includegraphics[height=9.5cm]{imagens/User.png}
+        \caption{Funcionamento definitivo de um nó \texttt{User}}\label{fig:User}
+    \end{figure}
+    O usuário \verb|Caveira| possui dois parceiros de trabalho, \verb|Carioca| e \verb|Bigas|, pois, as \verb|StringNode|'s que referenciam tais apelidos estão contidos numa fila referenciada pela variável \verb|partners|.
+
+    Por sua vez, \verb|Caveira| possui uma solicitação de parceria, de \verb|UFSCar|, pelo mesmo argumento, exceto pelo fato de, agora, o nó estar contido na fila à qual \verb|requests| aponta.
+
+    Finalmente, \verb|Caveira| possui duas mensagens não lidas de seu parceiro \verb|Bigas| em sua pilha de mensagens. Aqui, é interessante ressaltar que o código desenvolvido aproveita a função nativa de C \verb|strcat()| para repassar o conteúdo das mensagens \verb|content| à forma em que efetivamente são armazenadas, com o nome do emissor concatenada à mensagem (o conjunto é referenciado pela variável \verb|message|). Vide o código fonte para exatidão quanto a essa repassagem de informação.
+
+    \subsection{As funções internas desenvolvidas}
+    Finalmente, para finalizar a explicação do código, deve-se mencionar como os tipos de dados acima são operados.
+
+    Para manipular uma comunidade, a \verb|UserList| está munida das seguintes funções
+    \begin{itemize}
+        \item \verb|createUserList()|: para iniciar uma \verb|UserList|.
+        \item \verb|search()|: para procurar se certa pessoa está cadastrada na \verb|UserList|.
+        \item \verb|addUser()|: para adicionar um usuário novo à \verb|UserList|.
+        \item \verb|printUserList()|: para imprimir todos os usuários da rede social. Todos os nós da \verb|UserList|.
+        \item \verb|suggestPartnerships()|: sugere aos usuários outros com os quais poderiam iniciar parcerias (o critério é se algum parceiro seu é parceiro do usuário sugerido).
+        \item \verb|freeUserList()|: para deletar todos usuários da comunidade; todos os nós da \verb|UserList|.
+        \item \verb|restar()|: para deletar uma comunidade; uma \verb|UserList|.
+    \end{itemize}
+    Há funções pensadas nas funcionalidades oferecidas aos usuários:
+    \begin{itemize}
+        \item \verb|requestPartnership()|: para solicitar uma parceria.
+        \item \verb|printRequests()|: para imprimir todas as solicitações de parceria de um dado usuário.
+        \item \verb|sendMessage()|: para enviar uma mensagem a um parceiro.
+        \item \verb|printMessage()|: para imprimir as mensagens recebidas.
+    \end{itemize}
+    As funções restantes são para o funcionamento dos TADs utilizados. Mais funções \verb|create()|, para \verb|User|'s e \verb|StringNode|'s, por exemplo, como também \verb|push()| para a pilha de mensagens ou \verb|dequeue()| (remover da frente da fila) e \verb|enqueue()| (adicionar ao fim da fila) para as filas de parcerias e de solicitações.
+    
+    \subsection{Arquivos}
+    Os tipos \verb|StringNode|, \verb|StringStack| e \verb|StringStack| e suas funções correspondentes são desenvolvidas nos arquivos \verb|str.h| e \verb|str.c|. Já os \verb|User| e \verb|UserList| nos arquivos \verb|user.h| e \verb|user.c|, que aproveitam os arquivos \verb|str| na implementação de suas funções correspondentes.
+
+    \section{Estruturas de Dados Utilizadas e Justificativas}
+    As estruturas de dados utilizadas foram listas genéricas, filas e pilhas.
+    
+    Para armazenar os usuários da rede social, utilizou-se uma lista dinâmica encadeada, pois é natural assumir que o número de usuários possa variar. Ademais, há poucas operações feitas sobre a lista (por mais que várias percorrendo-na): novos usuários podem ser inseridos, velhos removidos, ou então a comunidade inteira deletada. Portanto, não é necessário a utilização de uma estrutura mais detalhada (e restrita) para armazenar os usuários.
+
+    Para armazenar-se os parceiros, assim como as solicitações pendentes de parceria de cada usuário optou-se pela estrutura de fila pois ela preserva ordem cronológica. Quando a lista é impressa, sabe-se a ordem em que as parcerias foram firmadas e quais solicitações são mais antigas.
+
+    Ao se tratar das mensagens de cada usuário, optou-se pela estrutura de pilha, novamente para preservar a ordem cronológica das mensagens, entretanto, agora salientando as mais novas (que aparecem no topo da pilha). É importante frisar que, após o usuário ler suas mensagens, elas são deletadas. Logo, não há necessidade de uma estrutura mais complexa, que permitisse deletar mensagens específicas.
+
+    \section{Compilar e Rodar o Programa}
+    \subsection{Compilador Utilizado}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[height=5cm]{imagens/compilador/compilador.jpg}
+        \label{fig:compilador}
+    \end{figure}
+
+    \subsection{Rodagem do Programa}
+    \begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imagens/codigo/CadastroCaveira.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imagens/codigo/CadastroCarioca.png}
+    \end{minipage}
+    \end{figure}
+    \begin{figure}[H]
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imagens/codigo/CadastroBigas.png}
+    \end{minipage}
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imagens/codigo/CadastroUFSCar.png}
+    \end{minipage}
+    \caption{Cadastro dos usuários}
+    \label{fig:Cadastros}
+    \end{figure}
+
+    \begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[height=3.5cm]{imagens/codigo/SolicitacaoCarioca.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[height=3.5cm]{imagens/codigo/SolicitacaoBigas.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[height=3.5cm]{imagens/codigo/ParceirosCaveira.png}
+    \end{minipage}
+    \caption{\texttt{Carioca} e \texttt{Bigas} pedem para serem parceiros de \texttt{Caveira}. Ele aceita}
+    \label{fig:ParceirosCaveira}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[height=5cm]{imagens/codigo/SugestaoDeParceria.png}
+        \caption{\texttt{Carioca} e \texttt{Bigas} possuem sugestão de parceria, já que apresentam o parceiro em comum \texttt{Caveira}}
+        \label{fig:SugestaoDeParceria}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[height=4.5cm]{imagens/codigo/SolicitacaoUFSCar.png}
+        \caption{\texttt{UFSCar} também solicita ser parceiro de \texttt{Caveira}}
+        \label{fig:SolicitacaoUFSCar}
+    \end{figure}
+
+    \begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imagens/codigo/MensagemSalve.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imagens/codigo/MensagemTdbao.png}
+    \end{minipage}
+    \caption{\texttt{Bigas} envia duas mensagens a \texttt{Caveira}}
+    \end{figure}
+
+    \begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imagens/codigo/ParceriaUFSCar.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imagens/codigo/MensagensCaveira.png}
+    \end{minipage}
+    \caption{\texttt{Caveira} vê suas solicitações de parcerias, assim como suas mensagens}
+    \end{figure}
+
+    \begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imagens/codigo/Reinicio.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[height=5cm]{imagens/codigo/VerUsuarios.png}
+    \end{minipage}
+    \caption{Os usuários são todos deletados e a lista deles é pedida como comprovação}
+    \end{figure}
+\end{document}
