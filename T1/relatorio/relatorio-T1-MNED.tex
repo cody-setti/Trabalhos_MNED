@@ -42,57 +42,68 @@
     \section{Seção}
     \subsection{Subseção}
 
-\begin{tikzpicture}[
-    > = Stealth,
-    boundary condition/.style={decoration={markings, mark=at position 0.5 with {\node[black, font=\small] {#1};}}, postaction={decorate}},
-    boundary arrow/.style={decoration={markings, mark=at position 0.5 with {\arrow{>}}}, postaction={decorate}}
-]
-    % Define coordinates
-    \coordinate (A) at (0,-1);  % Bottom-left
-    \coordinate (B) at (1,-1);  % Bottom-right
-    \coordinate (C) at (1,1);   % Top-right
-    \coordinate (D) at (0,1);   % Top-left
-    
-    % Draw domain
-    \fill[blue!10] (A) rectangle (C);
-    
-    % Draw axes
-    \draw[->, thick] (-0.5,0) -- (1.5,0) node[below right] {$x$};
-    \draw[->, thick] (0,-1.5) -- (0,1.5) node[above left] {$y$};
-    
-    % Draw domain boundaries
-    \draw[very thick] (A) -- (B) -- (C) -- (D) -- cycle;
-    
-    % Mark coordinates with dots
-    \foreach \coord/\pos/\label in {
-        {(0,-1)}/below left/{(0,-1)},
-        {(1,-1)}/below right/{(1,-1)},
-        {(1,1)}/above right/{(1,1)},
-        {(0,1)}/above left/{(0,1)}
-    } {
-        \fill \coord circle (2pt);
-        \node[\pos] at \coord {\footnotesize\label};
-    }
-    
-    % Labels for boundaries with conditions
-    \draw[boundary condition={$u=0$ (Dirichlet)}, red, very thick] (D) -- (A);
-    \draw[boundary condition={$u=0$ (Dirichlet)}, red, very thick] (C) -- (B);
-    \draw[boundary condition={$(\nabla u \cdot \mathbf{n})=e\sin(2\pi x)$ (Neumann)}, blue, very thick] (A) -- (B);
-    \draw[boundary condition={$(\nabla u \cdot \mathbf{n} + u)=0$ (Robin)}, blue, very thick] (D) -- (C);
-    
-    % Domain label
-    \node at (0.5,0) {$\Omega = [0,1] \times [-1,1]$};
-    
-    % Normal vectors
-    \draw[->, thick, olive] (0.5,-1) -- (0.5,-1.3) node[below] {$\mathbf{n}$};
-    \draw[->, thick, olive] (0.5,1) -- (0.5,1.3) node[above] {$\mathbf{n}$};
-    \draw[->, thick, olive] (0,-0.5) -- (-0.3,-0.5) node[left] {$\mathbf{n}$};
-    \draw[->, thick, olive] (1,-0.5) -- (1.3,-0.5) node[right] {$\mathbf{n}$};
-    
-    % Coordinate labels
-    \node[below right] at (0,0) {$O$};
-    \node[below] at (1,0) {$1$};
-    \node[left] at (0,1) {$1$};
-    \node[left] at (0,-1) {$-1$};
-\end{tikzpicture}
+    \begin{figure}[htbp]
+        \centering
+        \begin{tikzpicture}[
+            > = Stealth,
+            scale=1.8,
+            boundary label/.style={font=\scriptsize},
+            normal vector/.style={->, thick, olive, shorten >=1pt},
+            point label/.style={font=\scriptsize}
+        ]
+            % Define coordinates
+            \coordinate (A) at (0,-1);  % Bottom-left
+            \coordinate (B) at (1,-1);  % Bottom-right
+            \coordinate (C) at (1,1);   % Top-right
+            \coordinate (D) at (0,1);   % Top-left
+            \coordinate (O) at (0,0);   % Origin
+            
+            % Draw domain
+            \fill[blue!10] (A) rectangle (C);
+            
+            % Draw axis (minimized)
+            \draw[->, thin] (-0.25,0) -- (1.4,0) node[right, font=\scriptsize] {$x$};
+            \draw[->, thin] (0,-1.25) -- (0,1.25) node[above, font=\scriptsize] {$y$};
+            
+            % Draw domain boundaries
+            \draw[very thick] (A) -- (B) -- (C) -- (D) -- cycle;
+            
+            
+            
+            % Boundary conditions
+            % Left vertical boundary (Dirichlet)
+            \draw[red, very thick] (D) -- (A);
+            \node[boundary label, anchor=east] at (0,0.3) {$u = 0$};
+            
+            % Right vertical boundary (Dirichlet)
+            \draw[red, very thick] (C) -- (B);
+            \node[boundary label, anchor=west] at (1,0.3) {$u = 0$};
+            
+            % Bottom boundary (Neumann)
+            \draw[blue, very thick] (A) -- (B);
+            \node[boundary label, anchor=north] at (0.5,-1.4) {$(\nabla u \cdot \mathbf{n})\vert_{(x,-1)} = e\sin(2\pi x)$};
+
+            % Normal vectors with labels
+            \draw[normal vector] (0.5,-1) -- (0.5,-1.2) node[below, olive, font=\scriptsize] {$\mathbf{n}$};
+            \draw[normal vector] (0.5,1) -- (0.5,1.2) node[above, olive, font=\scriptsize] {$\mathbf{n}$};
+
+            % Top boundary (Robin)
+            \draw[blue, very thick] (D) -- (C);
+            \node[boundary label, anchor=south] at (0.5,1.4) {$(\nabla u \cdot \mathbf{n} + u)\vert_{(x,1)} = 0$};
+            
+            % Mark coordinates with dots
+            \foreach \coord/\pos/\label in {
+                {(0,-1)}/below left/{(0,-1)},
+                {(1,-1)}/below right/{(1,-1)},
+                {(1,1)}/above right/{(1,1)},
+                {(0,1)}/above left/{(0,1)},
+                {(0,0)}/below right/{O}
+            } {
+                \fill \coord circle (1pt);
+                \node[point label, \pos, inner sep=1pt] at \coord {\label};
+            }
+        \end{tikzpicture}
+        \caption{Domínio $\Omega = [0,1] \times [-1,1]$ com suas condições de contorno}
+        \label{fig:domain}
+    \end{figure}
 \end{document}
