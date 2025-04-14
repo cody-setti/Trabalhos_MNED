@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1744642200.53776 "/home/cody/Repositories/Trabalhos_MNED/T1/relatorio/relatorio-T1-MNED.tex" "relatorio-T1-MNED.pdf" "relatorio-T1-MNED" 1744642201.0291 0
-  "/home/cody/Repositories/Trabalhos_MNED/T1/relatorio/relatorio-T1-MNED.tex" 1744642200.37445 3870 e656a3a21564831ada0c3ca1f95e3f04 ""
+["pdflatex"] 1744643613.73006 "/home/cody/Repositories/Trabalhos_MNED/T1/relatorio/relatorio-T1-MNED.tex" "relatorio-T1-MNED.pdf" "relatorio-T1-MNED" 1744643614.22267 0
+  "/home/cody/Repositories/Trabalhos_MNED/T1/relatorio/relatorio-T1-MNED.tex" 1744643613.5694 3870 61cc9135648a6a8ac66983c8da77eb16 ""
   "/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1742685315 2971 def0b6c1f0b107b3b936def894055589 ""
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1742685315 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texmf-dist/fonts/tfm/jknappen/ec/ecbx1200.tfm" 1742685315 3584 402da0b29eafbad07963b1224b222f18 ""
@@ -167,9 +167,9 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1742685315 42087 b0f9697c952c8f5a8eede4134282cb0d ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1742726806 5311557 9da84c45f5b388655502706482323571 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1742727129 2009822 aae4587470b802989f185eef422061ce ""
-  "relatorio-T1-MNED.aux" 1744642200.96344 819 626453b5832479022ffe8d7147723537 "pdflatex"
-  "relatorio-T1-MNED.out" 1744642200.96344 177 106846955e17d2ff591cd801c069afd4 "pdflatex"
-  "relatorio-T1-MNED.tex" 1744642200.37445 3870 e656a3a21564831ada0c3ca1f95e3f04 ""
+  "relatorio-T1-MNED.aux" 1744643614.16287 819 626453b5832479022ffe8d7147723537 "pdflatex"
+  "relatorio-T1-MNED.out" 1744643614.16387 177 106846955e17d2ff591cd801c069afd4 "pdflatex"
+  "relatorio-T1-MNED.tex" 1744643613.5694 3870 61cc9135648a6a8ac66983c8da77eb16 ""
   (generated)
   "relatorio-T1-MNED.aux"
   "relatorio-T1-MNED.log"
