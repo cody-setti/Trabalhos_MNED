@@ -8,6 +8,10 @@
 \usepackage{float}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,decorations.markings,decorations.pathmorphing}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
 \usepackage{hyperref}
 \hypersetup{
 	hidelinks,
@@ -27,11 +31,11 @@
         \vspace{8mm}
         \begin{tabular}{rcl}
             Cody Stefano Barham Setti &-- &4856322 \\
-            Ian de Holando Cavalcante Bezerra &-- &13
+            Ian de Holanda Cavalcanti Bezerra &-- &13835412
         \end{tabular}
 
     \vspace{8mm}
-    14 de Abril de 2025
+    25 de Abril de 2025
     \end{center}
 
     \vspace{1mm}
@@ -39,9 +43,12 @@
     \vspace{0.5cm}
 
     % Corpo do texto
-    \section{Seção}
-    \subsection{Subseção}
-
+    \section{PVC de Interesse}
+    Para o domínio retangular $\Omega = [0,1]\times[-1,1]$, queremos resolver a seguinte equação de convecção-difusão anisotrópica em regime estacionário:
+    \begin{equation*}
+        \frac{\partial^2 u}{\partial x^2} + 3\frac{\partial^2 u}{\partial y^2} = c\frac{\partial u}{\partial y}.
+    \end{equation*}
+    com condição de Dirichlet $u(0,y)=u(1,y)=0$ em seus bordos verticais, de Robin no bordo superior e de Neumann no inferior, conforme a figura abaixo.
     \begin{figure}[htbp]
         \centering
         \begin{tikzpicture}[
@@ -106,4 +113,90 @@
         \caption{Domínio $\Omega = [0,1] \times [-1,1]$ com suas condições de contorno}
         \label{fig:domain}
     \end{figure}
+
+    Para $c=4\pi^2-3$, tal problema de valor de contorno (PVC) possui solução analítica
+    \begin{equation*}
+        u(x,y) = e^{-y}\sin(2\pi x).
+    \end{equation*}
+    Entretanto, elaboremos um esquema para solucioná-la numericamente.
+
+    \section{Discretização do PVC}
+    \subsection{Discretização do Domínio}
+
+    \subsection{Discretização da EDP}
+    Para discretizar a EDP de interesse com precisão de ordem $2$, utilizaremos diferenças finitas. Mais especificamente, aproximaremos as derivadas segundas por uma diferença centrada de $3$ pontos, ao passo que, para a derivada primeira, basta uma diferença centrada de $2$ pontos para atingir-se a ordem de convergência desejada. Logo, teremos as equações lineares:
+    \begin{align*}
+        \frac{U_{i+1j}-2U_{ij}+U_{i-1j}}{h^2} + 3\left(\frac{U_{ij+1}-2U_{ij}+U_{ij-1}}{h^2}\right) &= c\left(\frac{U_{ij+1}-U_{ij-1}}{2h}\right).
+    \intertext{Logo, isolando as incógnitas do lado esquerdo da equação,}
+        \left(\tfrac{3}{h^2}+\tfrac{c}{h}\right)U_{ij-1} + \Bigl[U_{i-1j} -\tfrac{8}{h^2}U_{ij} + \tfrac{1}{h^2}U_{i+1j}\Bigr] + \left(\tfrac{3}{h^2}-\tfrac{c}{2h}\right)U_{ij+1} &= 0.
+    \end{align*}
+
+    \subsection{Bordo Superior}
+    Os pontos da malha no bordo superior também tem valor desconhecido. Determinamo-nos por meio da condição de Robin
+    \begin{align*}
+        \left(\nabla u\cdot\boldsymbol{n}+u\right)\vert_{(x,1)} &= 0, &&\forall x\in[0,1].
+    %\shortintertext{Isto é,}
+    \intertext{Isto é,}
+        \begin{bmatrix}
+            \tfrac{\partial u}{\partial x} \\
+            \tfrac{\partial u}{\partial y}
+        \end{bmatrix}\cdot
+        \begin{bmatrix}
+            0 \\
+            1
+        \end{bmatrix}
+        +u &= 0, &&\forall x\in[0,1].
+    \intertext{Ou, mais simplesmente,}
+        \tfrac{\partial u}{\partial y} + u &= 0, &&\forall x\in[0,1].
+    \end{align*}
+    Portanto, novamente, para obter convergência de ordem $2$, tomaremos uma diferença \textbf{progressiva} para $\frac{\partial u}{\partial y}$ utilizando $3$ pontos:
+    \begin{align*}
+        \frac{3U_{ij}-4U_{ij-1}+U_{ij-2}}{2h} + U_{ij} &= 0.
+    \intertext{Reorganizando os índices em ordem crescente,}
+        \tfrac{1}{2h}U_{ij-2} -\tfrac{4}{2h}U_{ij-1} + \left(\tfrac{3}{2h}+1\right)U_{ij} &= 0.
+    \end{align*}
+
+    \subsection{Bordo Inferior}
+    Os pontos da malha no bordo inferior, por fim, também têm valor desconhecido. Determinemo-nos pela condição de Neumann
+    \begin{align*}
+        \left(\nabla u\cdot\boldsymbol{n}\right)\vert_{(x,-1)} &= e\sin(2\pi x), &&\forall x\in[0,1].
+    %\shortintertext{Isto é,}
+    \intertext{Isto é,}
+        \begin{bmatrix}
+            \tfrac{\partial u}{\partial x} \\
+            \tfrac{\partial u}{\partial y}
+        \end{bmatrix}\cdot
+        \begin{bmatrix}
+            0 \\
+            -1
+        \end{bmatrix}
+         &= e\sin(2\pi x), &&\forall x\in[0,1].
+    \intertext{Ou, mais simplesmente,}
+        \tfrac{\partial u}{\partial y} &= -e\sin(2\pi x), &&\forall x\in[0,1].
+    \end{align*}
+    Portanto, novamente, para obter convergência de ordem $2$, tomaremos uma diferença \textbf{progressiva} para $\frac{\partial u}{\partial y}$ utilizando $3$ pontos:
+    \begin{align*}
+        \frac{3U_{ij}-4U_{ij-1}+U_{ij-2}}{2h} &= -e\sin(2\pi x_{ij}).
+    \intertext{Reorganizando os índices em ordem crescente,}
+        \tfrac{1}{2h}U_{ij-2} -\tfrac{4}{2h}U_{ij-1} +\tfrac{3}{2h}U_{ij} &= -e\sin(2\pi x).
+    \end{align*}
+
+    \subsection{Solução Numérica}
+    Com a discretização descrita acima, chegamos na solução numérica mostrada na figura a seguir:
+
+    \section{Solução Exata e Análise dos Erros na Aproximação}
+    \subsection{Gráfico da Solução Exata}
+    Avaliando os valores exatos da função nos mesmos pontos do domínio utilizados para construir-se a malha para a solução numérica obtemos o gráfico mostrado na figura a seguir:
+
+    \subsection{Análise dos Erros na Aproximação}
+    Agora, com tanto a solução numérica, quanto a exata em mãos, basta calcularmos a diferença absoluta entre seus valores em cada ponto da malha que sai de imediato o \emph{heat-map} abaixo, identificando as regiões de maior e menor erro:
+
+    Ademais, fizemos um gráfico do erro (com sinal) no mesmo formato tridimensional dos das soluções numérica e exata, para tornar ainda mais fácil a localização das regiões do domínio onde um erro maior é cometido na aproximação. Vide-o abaixo:
+
+    Claramente, a região de maior erro é onde a temperatura da chapa varia mais violentamente. Isso é natural de se esperar, pois\dots
+
+    \section{Análise de Convergência}
+    Por fim, analisamos o erro global cometido para diferentes valores de espaçamento $h$, cada vez menores, cujo decaimento é mostrado no gráfico abaixo:
+
+    Como esperado, a convergência à solução exata é de ordem $2$, salvo para valores muito baixos de $h$. Acreditamos que tal desaceleração na taxa de convergência deve-se a\dots
 \end{document}
