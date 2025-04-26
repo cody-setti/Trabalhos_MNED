@@ -11,12 +11,15 @@
 
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{mathtools}
 
 \usepackage{hyperref}
 \hypersetup{
 	hidelinks,
 	linkcolor = blue
 } % Changes the link color to black and hides the hideous red border that usually is created
+
+\setcounter{section}{-1}
 
 \begin{document}
     % Título
@@ -76,7 +79,6 @@
             \draw[very thick] (A) -- (B) -- (C) -- (D) -- cycle;
             
             
-            
             % Boundary conditions
             % Left vertical boundary (Dirichlet)
             \draw[red, very thick] (D) -- (A);
@@ -106,7 +108,7 @@
                 {(0,1)}/above left/{(0,1)},
                 {(0,0)}/below right/{O}
             } {
-                \fill \coord circle (1pt);
+                \fill[red] \coord circle (1pt);
                 \node[point label, \pos, inner sep=1pt] at \coord {\label};
             }
         \end{tikzpicture}
@@ -120,23 +122,40 @@
     \end{equation*}
     Entretanto, elaboremos um esquema para solucioná-la numericamente.
 
-    \section{Discretização do PVC}
-    \subsection{Discretização do Domínio}
+    \section{Solução Numérica e Seu Gráfico}
+    \subsection{Discretização do Domínio (Geração da Malha)}
+    Primeiramente, para discretizar o domínio, utilizaremos uma malha uniforme, com espaçamento $h$ em ambas as direções. Logo, o eixo-x do domínio torna-se o conjunto discreto $\{0,h,2h,\ldots,1-h,1\}$, de $N_x=\frac{1}{h}+1$ pontos, e o eixo-y torna-se o conjunto discreto $\{-1,-1+h,-1+2h,\ldots,1-h,1\}$, de $N_y=\frac{1-(-1)}{h}+1=\frac{2}{h}+1$ pontos. Portanto, no total, o domínio será composto de $N_x\times N_y$ pontos.
 
-    \subsection{Discretização da EDP}
-    Para discretizar a EDP de interesse com precisão de ordem $2$, utilizaremos diferenças finitas. Mais especificamente, aproximaremos as derivadas segundas por uma diferença centrada de $3$ pontos, ao passo que, para a derivada primeira, basta uma diferença centrada de $2$ pontos para atingir-se a ordem de convergência desejada. Logo, teremos as equações lineares:
+    Todavia, vale salientar que, como as laterais do domínio são de Dirichlet, por mais que a malha tera $N_x\times N_y$ pontos, teremos apenas $N \coloneq (N_x-2)\times N_y$ incógnitas.
+
+    \subsection{Discretização do PVC (Construção do Sistema Linear)}
+    Agora que esta clara a disposição dos pontos da malha (e quais deles são incógnitas), está claro que transformaremos nosso PVC em um sistema linear de dimensões
+    \begin{equation*}
+        A_{N\times N}U_{N\times 1} = F_{N\times 1},
+    \end{equation*}
+    lembrando que $N \coloneq (N_x-2)\times N_y$.
+
+    \subsubsection{Pontos Interiores}
+    Primeiramente, para os pontos interiores de nosso dominio, a partir de um estêncil de $5$ pontos em formato de cruz, temos uma discretizacao conveniente para a EDP, que nos produz, para cada ponto interior, uma respectiva equação linear.
+    
+    Mais precisamente, ja que queremos uma precisão de ordem $2$, aproximaremos as derivadas segundas por uma diferença centrada de $3$ pontos, ao passo que, para a derivada primeira, basta uma diferença centrada de $2$. Logo, teremos as equações lineares:
     \begin{align*}
         \frac{U_{i+1j}-2U_{ij}+U_{i-1j}}{h^2} + 3\left(\frac{U_{ij+1}-2U_{ij}+U_{ij-1}}{h^2}\right) &= c\left(\frac{U_{ij+1}-U_{ij-1}}{2h}\right).
     \intertext{Logo, isolando as incógnitas do lado esquerdo da equação,}
         \left(\tfrac{3}{h^2}+\tfrac{c}{h}\right)U_{ij-1} + \Bigl[U_{i-1j} -\tfrac{8}{h^2}U_{ij} + \tfrac{1}{h^2}U_{i+1j}\Bigr] + \left(\tfrac{3}{h^2}-\tfrac{c}{2h}\right)U_{ij+1} &= 0.
     \end{align*}
+    Vale salientar duas coisas aqui:
+    \begin{enumerate}
+        \item Para os pontos interiores  da forma $(i,1)$ e $(i,N_y-1)$, haverao indices que passam dos limites de indexacao das incógnitas. Entende-se que, para tais pontos, os termos de indices fora de escopo devem ser tomados como sendo nulos, o que corresponde as condições de contorno de Dirichlet $u(x,-1)=u(x,1)=0$.
 
-    \subsection{Bordo Superior}
-    Os pontos da malha no bordo superior também tem valor desconhecido. Determinamo-nos por meio da condição de Robin
+        \item Ademais, os indices da forma bidimensional $(i,j)$ sao utilizados apenas por conveniencia, ja que remetem claramente ao formato do dominio. Entretanto, para a montagem do sistema linear, eles sao, na realidade, reindexados com um unico indice $k$, seguindo a ordem natural de ordenacao da malha, isto e, dados $i,j$, o respectivo $k$ tera valor $k=(i-1)N_y+j$.
+    \end{enumerate}
+
+    \subsubsection{Bordo Superior}
+    Os pontos da malha no bordo superior, isto e, da forma $(i,N_y)$, também têm valor desconhecido. Determinamo-nos por meio da condição de Robin
     \begin{align*}
         \left(\nabla u\cdot\boldsymbol{n}+u\right)\vert_{(x,1)} &= 0, &&\forall x\in[0,1].
-    %\shortintertext{Isto é,}
-    \intertext{Isto é,}
+    \shortintertext{Isto é,}
         \begin{bmatrix}
             \tfrac{\partial u}{\partial x} \\
             \tfrac{\partial u}{\partial y}
@@ -149,19 +168,18 @@
     \intertext{Ou, mais simplesmente,}
         \tfrac{\partial u}{\partial y} + u &= 0, &&\forall x\in[0,1].
     \end{align*}
-    Portanto, novamente, para obter convergência de ordem $2$, tomaremos uma diferença \textbf{progressiva} para $\frac{\partial u}{\partial y}$ utilizando $3$ pontos:
+    Portanto, novamente, para obter convergência de ordem $2$, discratizaremos tal ED por uma diferença \textbf{progressiva} para $\frac{\partial u}{\partial y}$ utilizando $3$ pontos:
     \begin{align*}
         \frac{3U_{ij}-4U_{ij-1}+U_{ij-2}}{2h} + U_{ij} &= 0.
     \intertext{Reorganizando os índices em ordem crescente,}
         \tfrac{1}{2h}U_{ij-2} -\tfrac{4}{2h}U_{ij-1} + \left(\tfrac{3}{2h}+1\right)U_{ij} &= 0.
     \end{align*}
 
-    \subsection{Bordo Inferior}
-    Os pontos da malha no bordo inferior, por fim, também têm valor desconhecido. Determinemo-nos pela condição de Neumann
+    \subsubsection{Bordo Inferior}
+    Os pontos da malha no bordo inferior, aqueles da forma $(i,1)$, por fim, também têm valor desconhecido. Determinemo-nos pela condição de Neumann
     \begin{align*}
         \left(\nabla u\cdot\boldsymbol{n}\right)\vert_{(x,-1)} &= e\sin(2\pi x), &&\forall x\in[0,1].
-    %\shortintertext{Isto é,}
-    \intertext{Isto é,}
+    \shortintertext{Isto é,}
         \begin{bmatrix}
             \tfrac{\partial u}{\partial x} \\
             \tfrac{\partial u}{\partial y}
@@ -174,29 +192,63 @@
     \intertext{Ou, mais simplesmente,}
         \tfrac{\partial u}{\partial y} &= -e\sin(2\pi x), &&\forall x\in[0,1].
     \end{align*}
-    Portanto, novamente, para obter convergência de ordem $2$, tomaremos uma diferença \textbf{progressiva} para $\frac{\partial u}{\partial y}$ utilizando $3$ pontos:
+    Portanto, novamente, para obter convergência de ordem $2$, discratizaremos tal ED por uma diferença \textbf{regressiva} para $\frac{\partial u}{\partial y}$ utilizando $3$ pontos:
     \begin{align*}
         \frac{3U_{ij}-4U_{ij-1}+U_{ij-2}}{2h} &= -e\sin(2\pi x_{ij}).
     \intertext{Reorganizando os índices em ordem crescente,}
         \tfrac{1}{2h}U_{ij-2} -\tfrac{4}{2h}U_{ij-1} +\tfrac{3}{2h}U_{ij} &= -e\sin(2\pi x).
     \end{align*}
+    Vale salientar que apenas para esses pontos as respectivas componentes do termo independente sao não nulas, assumindo o valor $-e\sin(2\pi x_{ij})$.
 
-    \subsection{Solução Numérica}
-    Com a discretização descrita acima, chegamos na solução numérica mostrada na figura a seguir:
+    \subsection{Gráfico da Solução Numérica}
+    Com a discretização descrita acima, tomando-se um passo $h=0.01$, chegamos na solução numérica mostrada na figura a seguir:
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.8\textwidth]{solucao-numerica.png}
+        \caption{Solução numérica}
+        \label{fig:solucao-numerica}
+    \end{figure}
 
     \section{Solução Exata e Análise dos Erros na Aproximação}
     \subsection{Gráfico da Solução Exata}
-    Avaliando os valores exatos da função nos mesmos pontos do domínio utilizados para construir-se a malha para a solução numérica obtemos o gráfico mostrado na figura a seguir:
+    Avaliando-se os valores exatos da função-solução do PVC nos mesmos pontos do domínio utilizados para construir-se a malha da solução numérica, obtemos a figura a seguir:
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.8\textwidth]{solucao-exata.png}
+        \caption{Solução exata}
+        \label{fig:solucao-exata}
+    \end{figure}
 
     \subsection{Análise dos Erros na Aproximação}
-    Agora, com tanto a solução numérica, quanto a exata em mãos, basta calcularmos a diferença absoluta entre seus valores em cada ponto da malha que sai de imediato o \emph{heat-map} abaixo, identificando as regiões de maior e menor erro:
+    Agora, com tanto a solução numérica, quanto a exata em mãos, basta calcularmos a diferença absoluta entre seus valores em cada ponto da malha que sai de imediato o \emph{heat-map} abaixo, identificando as regiões do domínio onde a aproximação é mais e menos fidedigna:
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.8\textwidth]{erro-heatmap.png}
+        \caption{Erro na aproximação}
+        \label{fig:erro-heatmap}
+    \end{figure}
 
-    Ademais, fizemos um gráfico do erro (com sinal) no mesmo formato tridimensional dos das soluções numérica e exata, para tornar ainda mais fácil a localização das regiões do domínio onde um erro maior é cometido na aproximação. Vide-o abaixo:
+    Ademais, fizemos um gráfico do erro (com sinal, nao valor absoluto) no mesmo formato tridimensional dos das soluções numérica e exata, apenas para tornar ainda mais fácil a localização das regiões do domínio onde um erro maior é cometido na aproximação. Vide-o abaixo:
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.8\textwidth]{erro-plot3D.png}
+        \caption{Erro na aproximação}
+        \label{fig:erro-plot3D}
+    \end{figure}
 
-    Claramente, a região de maior erro é onde a temperatura da chapa varia mais violentamente. Isso é natural de se esperar, pois\dots
+    Claramente, a região de maior erro é onde a temperatura da chapa varia mais violentamente. Isso é natural de se esperar, pois 
 
     \section{Análise de Convergência}
-    Por fim, analisamos o erro global cometido para diferentes valores de espaçamento $h$, cada vez menores, cujo decaimento é mostrado no gráfico abaixo:
+    Por fim, analisemos o erro global cometido para diferentes valores de espaçamento $h$, cada vez menores.
+    
+    No caso, por erro global, ja que temos a solução exata em mãos, entendemo-no como sendo a media aritmetica dos erros em cada ponto da malha (erros locais).
 
-    Como esperado, a convergência à solução exata é de ordem $2$, salvo para valores muito baixos de $h$. Acreditamos que tal desaceleração na taxa de convergência deve-se a\dots
+    O decaimento do erro global é mostrado no gráfico abaixo:
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.8\textwidth]{erro_global.png}
+        \caption{Decaimento do erro global}
+        \label{fig:erro_global}
+    \end{figure}
+    Como esperado, a convergência à solução exata é praticamente de ordem $2$.
 \end{document}
