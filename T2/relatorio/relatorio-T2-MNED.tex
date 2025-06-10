@@ -1,0 +1,200 @@
+\documentclass[12pt,a4paper,portuguese]{article}
+
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,decorations.markings,decorations.pathmorphing}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+\usepackage{hyperref}
+\hypersetup{
+	hidelinks,
+	linkcolor = blue
+} % Changes the link color to black and hides the hideous red border that usually is created
+
+\setcounter{section}{-1}
+
+\begin{document}
+    % Título
+    \vspace{5mm}
+    \rule{0.95\textwidth}{1pt}
+    \vspace{3mm}
+    \begin{center}
+        \textbf{\huge Problemas de Valor Inicial} \\
+        \Large Trabalho 2 \\
+        \large SME0202 Métodos Numéricos em Equações Diferenciais
+    
+        \vspace{8mm}
+        \begin{tabular}{rcl}
+            Cody Stefano Barham Setti &-- &4856322 \\
+            Ian de Holanda Cavalcanti Bezerra &-- &13835412
+        \end{tabular}
+
+    \vspace{8mm}
+    10 de Junho de 2025
+    \end{center}
+
+    \vspace{1mm}
+    \rule{0.95\textwidth}{1pt}
+    \vspace{0.5cm}
+
+    % Corpo do texto
+    \section{PVI de Interesse}
+    Nesse trabalho vamos resolver dois PVIs, um com um pendulo simples, o exemplo classico do osilador harmonico, e em seguida, o pendulo duplo, um exemplo de movimento chaotico.
+
+    Vamos explorar como diferentes metodos de solucao desse PVI se comportam com diferentes fatores como malha de discretizacao ou pequenas perturbacoes as condicoes iniciais.
+
+    \subsection{Pêndulo Simples}
+    
+    \begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[scale=1.8]
+        % pivot and bob
+        \coordinate (O) at (0,1.5);
+        \coordinate (B) at (0,0);
+
+        % rod
+        \draw (O) -- (B);
+
+        % bob
+        \draw[fill] (B) circle (0.1);
+
+        % pivot label
+        \node[above] at (O) {$O$};
+
+        % trajectory arc: center at O, radius = 1.5, from –120° to –60°
+        \draw[thick, dashed, blue]
+            (O) ++(-120:1.5) arc (-120:-60:1.5);
+    \end{tikzpicture}
+    \caption{Pêndulo Simples}
+    \label{fig:pendulof}
+\end{figure}
+
+    \subsubsection*{Formulação do Problema}
+    O movimento do pêndulo simples é descrito pela seguinte equação diferencial de segunda ordem:
+    \begin{equation}
+        q''(t) + \sin(q(t)) = 0, \qquad q(0) = q_0, \quad q'(0) = 0
+    \end{equation}
+    onde $q(t)$ é o ângulo em relação à vertical. Para este trabalho, consideramos $q_0 = \frac{\pi}{4}$.
+
+    \subsubsection*{Solução Analítica}
+    A solução analítica é dada em termos de funções elípticas:
+    \begin{equation}
+        q(t) = 2\arcsin\left\{\sin\left(\frac{q_0}{2}\right)\operatorname{sn}\left[K\left(\sin^2\left(\frac{q_0}{2}\right)\right)-t;\sin^2\left(\frac{q_0}{2}\right)\right]\right\}
+    \end{equation}
+    onde $\operatorname{sn}(\cdot;\cdot)$ é a função elíptica de Jacobi e $K(\cdot)$ a integral elíptica completa de primeira ordem.
+
+    \subsubsection*{Métodos Numéricos}
+    Foram implementados três métodos numéricos para resolver o sistema equivalente de EDOs de primeira ordem:
+    \begin{itemize}
+        \item \textbf{Euler Explícito:} método simples de passo único, primeira ordem;
+        \item \textbf{Runge-Kutta de 4ª Ordem (RK4):} método clássico de quarta ordem;
+        \item \textbf{Euler Implícito:} método de primeira ordem, resolvido via método de Newton.
+    \end{itemize}
+    
+    \subsubsection*{Resultados}
+    \paragraph{Evolução Temporal}
+    A seguir, apresentamos os gráficos da posição angular em função do tempo para cada método, comparando com a solução analítica de referência.
+    
+    % === FIGURA: Evolução Temporal ===
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\textwidth]{Img_1.png} % Substitua pelo caminho correto
+        \caption{Evolução temporal do ângulo $q(t)$ para cada método numérico e solução analítica.}
+        \label{fig:pendulo-temporal}
+    \end{figure}
+
+    \paragraph{Ordem de Convergência}
+    Os gráficos a seguir mostram o erro em função do passo de tempo para cada método, evidenciando a ordem de convergência esperada.
+    
+    % === FIGURA: Convergência ===
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\textwidth]{Img_2.png} % Substitua pelo caminho correto
+        \caption{Erro maximo em função do passo de tempo para cada método.}
+        \label{fig:pendulo-convergencia}
+    \end{figure}
+
+    \paragraph{Retrato de Fase}
+    O retrato de fase (velocidade angular $p$ vs. posição angular $q$) para cada método é apresentado a seguir.
+    
+    % === FIGURA: Retrato de Fase ===
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\textwidth]{Img_3.png} % Substitua pelo caminho correto
+        \caption{Retrato de fase $(q,p)$ para cada método numérico.}
+        \label{fig:pendulo-fase}
+    \end{figure}
+
+    \subsubsection*{Discussão}
+    Os métodos numéricos implementados produziram resultados coerentes com a teoria. O esquema de Runge–Kutta de quarta ordem (RK4) apresentou maior precisão e ordem de convergência, ao passo que os métodos de Euler explícito e implícito exibiram erros mais acentuados para passos de tempo equivalentes. No retrato de fase, fica evidente a divergência comportamental entre os métodos de Euler: o explícito acumula energia a cada oscilação em relação à solução analítica, enquanto o implícito dissipa energia, reduzindo progressivamente a amplitude das oscilações.
+
+    
+    
+    % --------------------------------------------------------------------------
+    \newpage
+    \section{Pêndulo Duplo}
+
+\subsection*{Formulação do Problema}
+O pêndulo duplo é um sistema composto por dois pêndulos acoplados, apresentando comportamento dinâmico não-linear e, para certas condições, caótico. O sistema pode ser modelado por um conjunto de quatro EDOs de primeira ordem:
+\begin{align}
+    &\dot{q}_1 = p_1, \\
+    &\dot{q}_2 = p_2, \\
+    &\dot{p}_1 = f_1(q_1, q_2, p_1, p_2), \\
+    &\dot{p}_2 = f_2(q_1, q_2, p_1, p_2)
+\end{align}
+As equações completas estão detalhadas no notebook e seguem a formulação clássica do problema do pêndulo duplo.
+
+\subsection*{Método Numérico}
+O sistema foi resolvido utilizando o método de Runge–Kutta de 4ª ordem (RK4), devido à sua robustez para sistemas não-lineares e capacidade de capturar comportamentos complexos como o caos.
+
+\subsection*{Resultados}
+\paragraph{Experimento 1: Condições Próximas do Equilíbrio}
+Foram escolhidos valores iniciais pequenos para $q_1$ e $q_2$, próximos do equilíbrio. A trajetória do segundo pêndulo no plano $xy$ é apresentada abaixo:
+
+% === FIGURA: Trajetória próxima do equilíbrio ===
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Img_4.png} % Substitua pelo caminho correto
+    \caption{Trajetória $(x_2(t), y_2(t))$ do segundo pêndulo para condições iniciais próximas do equilíbrio.}
+    \label{fig:pendulo-duplo-equilibrio}
+\end{figure}
+
+Observa-se que, para pequenas amplitudes, o movimento é regular e previsível, semelhante ao de dois pêndulos simples acoplados.
+
+\paragraph{Experimento 2: Condições Caóticas e Perturbação}
+Neste experimento, foram escolhidas condições iniciais que levam a comportamento caótico. Uma pequena perturbação foi introduzida em uma das condições iniciais e as trajetórias resultantes foram comparadas:
+
+% === FIGURA: Trajetórias caóticas ===
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Img_5.png} % Substitua pelo caminho correto
+    \caption{Trajetórias $(x_2(t), y_2(t))$ do segundo pêndulo para duas condições iniciais quase idênticas.}
+    \label{fig:pendulo-duplo-caotico}
+\end{figure}
+
+Abaixo, apresentamos o gráfico da distância entre as trajetórias ao longo do tempo, evidenciando a sensibilidade às condições iniciais:
+
+% === FIGURA: Divergência ===
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Img_6.png} % Substitua pelo caminho correto
+    \caption{Divergência entre trajetórias: distância entre $(x_2, y_2)$ para condições iniciais ligeiramente diferentes.}
+    \label{fig:pendulo-duplo-divergencia}
+\end{figure}
+
+\subsection*{Discussão}
+O pêndulo duplo apresenta comportamento caótico para certas condições iniciais, caracterizado por extrema sensibilidade: pequenas perturbações resultam em trajetórias completamente distintas após algum tempo. Este fenômeno é evidenciado pela rápida divergência das trajetórias no gráfico acima. O método RK4 foi essencial para capturar a dinâmica complexa do sistema, permitindo observar tanto o regime regular quanto o caótico.\par
+
+% [Adicione comentários e discussões adicionais conforme necessário]
+
+% [Inclua as figuras geradas pelo notebook e ajuste os caminhos conforme necessário]
+
+\end{document}
+
