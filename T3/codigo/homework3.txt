@@ -1,0 +1,300 @@
+Trabalho #3 - Equações Parabólicas e Hiperbólicas
+
+1. Conhecimentos Preliminares
+A modelagem precisa da interação entre processos advectivos e difusivos é um dos desafios mais comuns e complexos na aproximação numérica de equações diferenciais parciais. Isso se deve à frequência
+e diversidade desses problemas, além de sua estreita ligação com questões de perturbação singular e com
+a teoria da camada limite. Outro motivo é que os algoritmos e técnicas numéricas aplicados à sua análise
+diferem significativamente nos casos de equações parabólicas e hiperbólicas.
+Considere u uma propriedade material, como calor, entalpia ou de concentração de uma solução. Assuma que u é conservada e pode mudar apenas através de trocas entre partículas materiais ou por fontes
+externas. Por meio de suposições que simplificam o problema, com base na Lei de Conservação para u, e
+considerando a Lei de Fick (ou Lei de Fourier se u é temperatura), pode-se escrever a relação:
+ut + aux = κuxx + f ,
+
+(1)
+
+onde κ > 0 é o coeficiente de difusão, f é o termo fonte, e a é a velocidade.
+A equação (1) é conhecida como equação unidimensional de advecção-difusão. O lado esquerdo representa o transporte de u na direção horizontal. Por outro lado, o primeiro termo do lado direito representa
+o transporte por difusão. O balanço entre advecção e difusão é caracterizado pelo número de Péclet, Pe,
+definido por
+|a|L
+,
+Pe =
+κ
+onde L representa o comprimento característico. Para Pe ≫ 1 a advecção será dominante, e caso Pe ≪ 1
+a difusão será dominante. Com a introdução de variáveis adimensionais que levam ao surgimento de Pe, e
+considerando o termo fonte nulo, a equação (1) pode ser escrita na forma:
+ut + ux =
+
+1
+uxx .
+Pe
+
+A equação (1) é parabólica; se κ = 0 ela será hiperbólica; caso 0 < κ ≪ 1, isto é, se Pe ≫ 1, aspectos
+hiperbólicos emergem. Informações adicionais e desenvolvimentos detalhados podem ser encontrados em
+[1, 2]. Este tipo de equação ocorre com frequência em simulação de escoamentos transiente em dutos, na
+difusão de quantidade de movimento, energia ou vorticidade, por exemplo.
+
+Referências
+[1] K. W. Morton. Numerical Solution of Convection-Diffusion Problems. Oxford University Computing
+Laboratory, Oxford , UK, 1996.
+[2] P. Wesseling. Principles of Computacional Fluid Dynamics. Springer, 2001.
+
+2. Especificações sobre o trabalho
+2.1 Tarefas
+Para facilitar as análises, a equação pode ser trabalhada na sua forma adimensional
+ut + ux =
+
+1
+uxx ,
+Pe
+
+0 ≤ x ≤ 15,
+
+(2)
+
+com condições de contorno periódicas, para 0 ≤ t ≤ 12 e com condição inicial:
+u(x, 0) = exp(−20(x − 2)2 ) + exp(−(x − 5)2 ).
+Para atender aos requisitos desta atividade, você deverá:
+1. Discretizar o problema dado por (2) aplicando diferenças progressivas no tempo e centradas no espaço, e implementar o método resultante com ∆x pequeno
+opara que a curva tenha aspecto
+n o suficiente
+∆x2
+suave e espaçamento temporal que satisfaça ∆t < min 2Pe−1 +∆x , ∆x , considerando três casos distintos:
+(I) Pe ≪ 1,
+(II) Pe = 1,
+(III) Pe ≫ 1.
+Construa gráficos tridimensionais que relacione as variáveis u, t e x em cada uma das três situações.
+Um exemplo da configuração deste gráfico pode ser observado na Figura 1.
+Sugestões: Para o caso (I), com a finalidade de poupar tempo de execução, é interessante considerar
+Pe na ordem de 10−1 (exemplos: 0.1, 0.15, 0.23). Para o caso (III), Pe pode ser tomado na ordem de
+dezenas, centenas ou até milhares.
+
+1.0
+0.8
+0.6
+
+u
+
+0.4
+0.2
+0.0
+10
+8
+0
+
+2
+
+4
+
+4
+
+6
+x
+
+8
+
+10
+
+12
+
+6
+t
+
+2
+14
+
+0
+
+Figura 1: Exemplo gráfico tridimensional para um valor Pe > 1.
+
+2. Discretizar o mesmo problema, mas agora aplicando diferenças progressivas no tempo, centradas no
+espaço para as derivadas de segunda ordem Pe−1 uxx , e estratégia Upwind de primeira ordem para o
+termo advectivo ux , implementando o método resultante.
+(a) Estude o que acontece com ambas discretizações quando o número de Péclet é muito grande
+(equação se aproxima de uma equação de advecção linear) ou muito pequeno (equação se aproxima de uma equação de difusão). O que acontece com o método centrado quando Pe é da
+ordem de centenas? Acontece o mesmo com o método Upwind? Teste mais de um valor de Pe
+nessa faixa. Caso haja diferença, explique o motivo.
+(b) Inclua também um gráfico para cada caso que apresente u como função de x em 6 tempos distintos (incluindo a condição inicial), igualmente espaçados, nos quais seja possível observar nítida
+mudança no comportamento da solução. Um exemplo de gráficos esperados para esse estudo
+está disposto na Figura 2. Utilize os mesmos tempos em todos os resultados apresentados.
+Comente as diferenças observadas, e explique porque as mudanças nas soluções ocorrem da
+forma que foram apresentadas.
+e 1
+t=0
+t=?
+t = 2*?
+t = 3*?
+t = 4*?
+t = 5*?
+
+0.8
+
+u
+
+0.6
+0.4
+
+0.6
+0.4
+0.2
+
+2
+
+4
+
+6
+
+8
+
+10
+
+x
+e na ordem de dezenas
+
+12
+
+t=0
+t=?
+t = 2*?
+t = 3*?
+t = 4*?
+t = 5*?
+
+0.8
+
+u
+
+0.6
+0.4
+
+0.0
+
+14
+
+0.2
+
+0
+
+2
+
+4
+
+1.0
+
+6
+
+8
+
+10
+
+x
+e na ordem de centenas
+
+12
+
+14
+
+t=0
+t=?
+t = 2*?
+t = 3*?
+t = 4*?
+t = 5*?
+
+0.8
+0.6
+
+u
+
+0
+
+1.0
+
+0.0
+
+t=0
+t=?
+t = 2*?
+t = 3*?
+t = 4*?
+t = 5*?
+
+0.8
+
+0.2
+0.0
+
+e=1
+
+1.0
+
+u
+
+1.0
+
+0.4
+0.2
+
+0
+
+2
+
+4
+
+6
+
+x
+
+8
+
+10
+
+12
+
+14
+
+0.0
+
+0
+
+2
+
+4
+
+6
+
+x
+
+8
+
+10
+
+12
+
+14
+
+Figura 2: Exemplo gráfico que ilustra variação obtida para diferentes tempos, considerando diferentes
+valores de Pe.
+
+n
+o
+2
+3. Considerando a restrição ∆t < min 2Pe∆x
+,
+∆x
+imposta no primeiro item do trabalho, construa
+−1 +∆x
+um gráfico simples, em escala logarítmica, dos valores das restrições apresentadas entre chaves com
+relação aos número de Pe. Identifique a partir de qual valor de Pe, o valor de cada condição começa
+a ser mais restritiva. Por que isso acontece e quais são as implicações disso no planejamento da
+escolha adequada de um método para resolver o problema diferencial? Sugestão: Use as condições
+de estabilidade estudadas para te ajudar a responder a essa pergunta.
+Redija um documento em PDF que contenha: breve relatório que inclua estratégias de implementação;
+os resultados solicitados com gráficos e comentários. Não se esqueça de se atentar à qualidade da escrita,
+à disposição do texto (justificado, com tipo e tamanho da fonte padronizados) e à legibilidade das imagens
+inseridas (lembre-se de incluir legendas caso haja mais de uma curva no mesmo plano). Inclua também,
+neste PDF, comentários que julgar necessários.
+
+Bom trabalho!
+
+

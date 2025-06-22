@@ -1,0 +1,2655 @@
+Numerical Methods for
+Differential Equations
+Diffusion Equations and Parabolic Problems
+Prof. Dr. Fabricio Simeoni de Sousa
+Departamento de Matemática Aplicada e Estatı́stica
+Instituto de Ciências Matemáticas e de Computação (ICMC)
+USP – São Carlos
+
+Heat equation (or diffusion equation)
+We consider the heat equation on a bounded domain x P p0, 1q and for time t ą t0 :“ 0
+which is the classical example of a parabolic equation:
+ut “ κuxx
+
+for
+
+0 ă x ă 1, t ą 0.
+
+We need initial condition at time t0 “ 0,
+upx, 0q “ ηpxq for
+
+0 ď x ď 1,
+
+and also boundary conditions,
+up0, tq “ g0 ptq for t ą 0,
+up1, tq “ g1 ptq for t ą 0.
+For simplicity, we assume that κ “ 1. If κ ă 0, then ut “ κuxx would be a backward
+heat equation, which is an ill-posed problem.
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+2 / 54
+
+A natural discretization: the forward difference
+method
+Consider a discrete grid with grid points pxi , tn q, where
+xi “ ih,
+
+tn “ nk.
+
+Here h “ ∆x is the mesh spacing on the x-axis and k “ ∆t is the time step. Let
+Uin « upxi , tn q represent the numerical approximation to u at pxi , tn q.
+One natural discretization of the heat equation ut “ uxx would be the forward
+difference method:
+˘
+Uin`1 ´ Uin
+1` n
+n
+“ 2 Ui´1
+´ 2Uin ` Ui`1
+.
+k
+h
+This uses our standard centered difference in space and a forward difference in time.
+This is an explicit method since we can compute each Uin`1 explicitly in terms of the
+previous data:
+Uin`1 “ Uin `
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+˘
+k` n
+n
+Ui´1 ´ 2Uin ` Ui`1
+.
+2
+h
+SME0202
+
+3 / 54
+
+Stencil
+offorward
+the forward
+difference
+ﬁgure shows the stencil
+of the
+difference
+method: method
+
+Below figure shows the stencil of the forward
+� difference method: �
+k
+Uin+1 = Uin + 2 ` Uin−1 − 2Uin +˘Uin+1 .
+hk n ´ 2Un ` Un .
+Uin`1 “ Uin ` 2 Ui´1
+i
+i`1
+h
+a one-step
+method
+in time,
+which
+isalso
+also
+called
+a two-level
+method
+in
+This is a one-step
+method
+in time,
+which is
+called
+a two-level
+method in
+the
+PDEs, it
+since
+it involves
+thesolution
+solution at at
+twotwo
+different
+time levels.
+of context
+PDEs,ofsince
+involves
+the
+different
+time levels.
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+4 / 54
+
+The matrix form of forward difference method
+The forward difference method can be represented in the following matrix form:
+»
+fi »
+fi »
+fi
+U1n`1
+U1n
+p1 ´ 2λq
+λ
+— n`1 ffi —
+ffi — Un ffi
+— U2 ffi —
+λ
+p1 ´ 2λq
+λ
+ffi — 2 ffi
+— n`1 ffi —
+ffi — Un ffi
+— U3 ffi —
+λ
+p1
+´
+2λq
+λ
+ffi — 3 ffi
+—
+ffi
+ffi — . ffi
+— . ffi “ —
+.
+.
+.
+ffi — . ffi
+.
+.
+.
+— .. ffi —
+.
+.
+.
+—
+ffi — . ffi
+—
+ffi
+ffi — n ffi
+— n`1 ffi —
+fl –Um´1 fl
+λ p1 ´ 2λq
+λ
+–Um´1 fl –
+n
+n`1
+λ
+p1 ´ 2λq
+Um
+Um
+»
+fi
+λg0 ptn q
+— 0 ffi
+—
+ffi
+— 0 ffi
+ffi
+—
+ffi
+`—
+— .. ffi ,
+— . ffi
+—
+ffi
+– 0 fl
+λg1 ptn q
+where λ “ hk2 . In compact form, we have
+
+Un`1 “ AUn ` gn .
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+5 / 54
+
+The Crank-Nicolson method
+Another one-step method is the Crank-Nicolson method,
+ˆ
+˙
+Uin`1 ´ Uin
+1
+“
+D2 Uin ` D2 Uin`1
+k
+2
+ˆ
+˙
+1
+n`1
+n`1
+n
+n
+“ 2 Ui´1
+´ 2Uin ` Ui`1
+` Ui´1
+´ 2Uin`1 ` Ui`1
+,
+2h
+which can be rewritten as
+Uin`1 “ Uin `
+
+ˆ
+˙
+k
+n`1
+n`1
+n`1
+n
+n
+n
+´
+2U
+`
+U
+`
+U
+´
+2U
+`
+U
+U
+i´1
+i
+i`1
+i´1
+i
+i`1
+2h2
+
+or
+n`1
+n`1
+n
+n
+´rUi´1
+` p1 ` 2rqUin`1 ´ rUi`1
+“ rUi´1
+` p1 ´ 2rqUin ` rUi`1
+,
+
+where r :“ k{p2h2 q. This is an implicit method and gives a tridiagonal system of
+equations to solve for all the value Uin`1 simultaneously.
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+6 / 54
+
+il of the Crank-Nicolson method
+Stencil of the Crank-Nicolson method
+Recall the Crank-Nicolson method,
+
+he Crank-Nicolson method,
+
+n n
+1 n`1 ` p1 ` 2rqU
+1 ´ rUn`1
+n+1“ rUn `
+´ 2rqUin `2r
+rU
+−rUin−+1´rU
++i´1
+(1 + 2r)Uin+in`1
+− rUi`1
+rUin−p1
+)i`1
+Ui, + rUin+1 .
+1 + (1 −
+i+1 = i´1
+
+of the Crank-Nicolson method is given below:
+ncilThe
+ofstencil
+the Crank-Nicolson
+method is given below:
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+7 / 54
+
+The matrix form of the Crank-Nicolson method
+The Crank-Nicolson method can be represented in the following matrix form:
+»
+fi » n`1 fi
+U1
+p1 ` 2rq
+´r
+ffi
+— ´r
+ffi —
+U2n`1 ffi
+p1 ` 2rq
+´r
+—
+ffi —
+—
+—
+ffi — Un`1 ffi
+´r
+p1 ` 2rq ´r
+—
+ffi — 3 ffi
+—
+ffi — . ffi
+.
+.
+.
+—
+ffi — . ffi
+..
+..
+..
+—
+ffi — . ffi
+ffi
+—
+ffi
+n`1 ffi
+–
+´r p1 ` 2rq
+´r fl —
+–Um´1 fl
+n`1
+´r
+p1 ` 2rq
+Um
+»
+fi
+rpg0 ptn q ` g0 ptn`1 qq ` p1 ´ 2rqU1n ` rU2n
+—
+ffi
+rU1n ` p1 ´ 2rqU2n ` rU3n
+—
+ffi
+n
+n
+n
+—
+ffi
+rU2 ` p1 ´ 2rqU3 ` rU4
+ffi
+—
+ffi .
+“—
+.
+—
+ffi
+.
+.
+—
+ffi
+—
+ffi
+n
+n
+n
+rUm´2 ` p1 ´ 2rqUm´1 ` rUm
+–
+fl
+n
+n
+rUm´1 ` p1 ´ 2rqUm ` rpg1 ptn q ` g1 ptn`1 qq
+Note how the BCs up0, tq “ g0 ptq and up1, tq “ g1 ptq come into these equations. Since a
+tridiagonal system of m equations can be solved with Opmq work, this implicit method is
+essentially as efficient per time step as an explicit method.
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+8 / 54
+
+LTE of the forward difference method
+The local truncation error τin :“ τF pxi , tn q of the forward difference method,
+Uin`1 “ Uin `
+
+˘
+k` n
+n
+Ui´1 ´ 2Uin ` Ui`1
+.
+2
+h
+
+is based on the form
+˘
+Uin`1 ´ Uin
+1` n
+n
+“ 2 Ui´1
+´ 2Uin ` Ui`1
+.
+k
+h
+where
+τF px, tq :“
+
+ˆ
+˙
+1
+upx, t ` kq ´ upx, tq
+´ 2 upx ´ h, tq ´ 2upx, tq ` upx ` h, tq .
+k
+h
+
+Again we should be careful to use the difference form that directly models the original
+differential equation
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+9 / 54
+
+LTE of the forward difference method (cont.)
+Although we don’t know upx, tq, if we assume that it is sufficiently smooth and use
+Taylor series expansions about upx, tq, we find that
+ˆ
+τF px, tq “
+
+1
+1
+ut ` kutt ` k2 uttt ` ¨ ¨ ¨
+2
+6
+
+˙
+
+ˆ
+˙
+1
+´ uxx ` h2 uxxxx ` ¨ ¨ ¨ .
+12
+
+Since ut “ uxx , the Op1q terms drop out. By differentiating ut “ uxx we find that
+utt “ utxx “ uxxxx and so
+ˆ
+˙
+1
+1
+τF px, tq “
+k ´ h2 uxxxx ` Opk2 ` h4 q.
+2
+12
+This method is said to be second order accurate in space and first order accurate in
+time, since the local truncation error is Oph2 ` kq.
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+10 / 54
+
+LTE of the Crank-Nicolson method
+A local truncation error analysis of the Crank-Nicolson method shows that it is second
+order accurate in both space and time,
+τpx, tq “ Opk2 ` h2 q
+.
+The local truncation error is given by τin :“ τpxi , tn q, where
+1
+tτ px, tq ` τB px, tqu
+2ˆ F
+˙
+˘
+1 upx, t ` kq ´ upx, tq
+1`
+“
+´ 2 upx ´ h, tq ´ 2upx, tq ` upx ` h, tq
+2
+k
+h
+ˆ
+˙
+˘
+1 upx, t ` kq ´ upx, tq
+1`
+´ 2 upx ´ h, t ` kq ´ 2upx, t ` kq ` upx ` h, t ` kq .
+`
+2
+k
+h
+
+τpx, tq “
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+11 / 54
+
+LTE of the Crank-Nicolson method (cont.)
+The LTE of the backward difference method (an implicit method) is given by
+˘
+upx, t ` kq ´ upx, tq
+1`
+´ 2 upx ´ h, t ` kq ´ 2upx, t ` kq ` upx ` h, t ` kq
+k
+h
+ˆ
+˙
+ˆ
+˙
+1
+1 2
+1 2
+“ ut ´ kutt ` k uttt ` ¨ ¨ ¨
+´ uxx ` h uxxxx ` ¨ ¨ ¨
+2
+6
+12
+px,t`kq
+px,t`kq
+ˆ
+˙
+ˆ
+˙
+1
+1 2
+1 2
+“ ´ kutt ` k uttt ` ¨ ¨ ¨
+´
+h uxxxx ` ¨ ¨ ¨
+2
+6
+12
+px,t`kq
+px,t`kq
+
+τB px, tq “
+
+Note that
+upx, tq “ upx, t ` kq ´ kut px, t ` kq `
+Therefore,
+
+upx, t ` kq ´ upx, tq
+“
+k
+
+ˆ
+
+k2
+k3
+utt px, t ` kq ´ uttt px, t ` kq ` ¨ ¨ ¨
+2!
+3!
+
+1
+1
+ut ´ kutt ` k2 uttt ` ¨ ¨ ¨
+2
+6
+
+˙
+px,t`kq
+
+Also note that
+ˆ
+˙
+1
+1
+1
+kutt px, tq ´ kutt px, t ` kq “ k ´ kuttt px, tq ` Opk2 q “ Opk2 q
+2
+2
+2
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+12 / 54
+
+Consistency + stability ðñ convergence
+Definition
+A method is said to be consistent if τpx, tq Ñ 0 as k, h Ñ 0.
+Just as in the other cases we have studied, we expect that consistency, plus some form
+of stability, will be enough to prove that the method converges at each fixed point
+pX, Tq as we refine the grid in both space and time. Moreover, we expect that for a
+stable method the global order of accuracy will agree with the order of the local
+truncation error, e.g., for the Crank-Nicolson method we expect that
+Uin ´ upX, Tq “ Opk2 ` h2 q Ñ 0,
+as k, h Ñ 0 when ih ” X and nk ” T are fixed.
+
+Lax equivalence theorem
+For linear PDEs, the fact that “consistency” plus “some form of stability”is equivalent
+to “convergence.”
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+13 / 54
+
+Stability of the forward difference method
+Assume that g0 ptq “ g1 ptq “ 0. Then the matrix form of the forward difference method
+can be written as
+Un`1 “ AUn .
+If an error E0 is made in representing the initial data U0 , then an error AE0 propagates
+in U1 , since
+U1 “ ApU0 ` E0 q “ AU0 ` AE0 .
+Repeating this precess, we have
+U n “ An U 0 ` An E 0 .
+We say the forward difference method is stable when the errors do not grow as n Ñ 8.
+That is, the method is stable if and only if for any initial error E0 , An E0 ď E0 for all
+n ě 1 for some norm k¨k.
+( ðñ kAn k ď 1 for some matrix norm ùñ ρpAn q “ pρpAqqn ď 1q.
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+14 / 54
+
+The forward difference method is conditionally stable
+So λ “ k{h2 should be chosen such that ρpAq ď 1. The eigenvalues of A are
+λj “ 1 ´ 2λp1 ´ cos θj q,
+jπ
+
+where θj “ m`1 , 1 ď j ď m. For ρpAq ď 1 we require
+´1 ď 1 ´ 2λp1 ´ cos θj q ď 1.
+This is true if and only if
+λ ď p1 ´ cos θj q´1 .
+The worse case cos θj “ ´1, which does not happen since the largest
+mπ
+θjpm“1q “ m`1
+. So we have
+0ăλď
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+1
+2
+
+or
+
+k
+1
+h2
+ď
+ùñ k ď .
+2
+2
+2
+h
+
+SME0202
+
+15 / 54
+
+Stability of the Crank-Nicolson method
+Taking r :“ k{p2h2 q and recalling the CN method, we have
+n`1
+n`1
+n
+n
+´rUi´1
+` p1 ` 2rqUin`1 ´ rUi`1
+“ rUi´1
+` p1 ´ 2rqUin ` rUi`1
+,
+n qJ and
+Let Un “ pU1n , U2n , ¨ ¨ ¨ , Um
+»
+2
+´1
+—´1
+2
+—
+—
+—
+B“—
+—
+—
+–
+
+fi
+´1
+..
+.
+..
+
+.
+´1
+
+ffi
+ffi
+ffi
+ffi
+ffi .
+ffi
+ffi
+´1fl
+2
+
+Then the method can be written in the matrix form
+pI ` rBqUn`1 “ pI ´ rBqUn .
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+16 / 54
+
+The Crank-Nicolson method is unconditionally stable
+For stability, we need ρppI ` rBq´1 pI ´ rBqq ď 1.
+Set A :“ pI ` rBq´1 pI ´ rBq with Un`1 “ AUn . If xi is an eigenvector of B
+associated with the eigenvalue µi , then
+pI ´ rBqxi “ xi ´ rBxi “ xi ´ rµi xi “ p1 ´ rµi qxi ,
+pI ` rBqxi “ xi ` rBxi “ xi ` rµi xi “ p1 ` rµi qxi ,
+pI ` rBq´1 xi “ p1 ` rµi q´1 xi ,
+pI ` rBq´1 pI ´ rBqxi “ pI ` rBq´1 p1 ´ rµi qxi “ p1 ´ rµi qp1 ` rµi q´1 xi .
+ùñ xi is also an eigenvector of A with the eigenvalue
+
+1 ´ rµi
+.
+1 ` rµi
+
+To have ρppI ` rBq´1 pI ´ rBqq ď 1, we get it if |p1 ` rµi q´1 p1 ´ rµi q| ď 1.
+Because µi “ 2p1 ´ cosθi q , we see that 0 ă µi ă 4. Thus
+ˇ
+ˇ
+ˇ 1 ´ rµi ˇ |1 ´ rµi |
+k
+ˇ
+ˇ
+.
+ˇ 1 ` rµ ˇ “ 1 ` rµ ď 1, @ r “ 2h2 ą 0.
+i
+i
+So, the Crank-Nicolson method is an unconditionally stable method.
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+17 / 54
+
+Method of lines (MOL)
+
+To understand how stability theory for time-dependent PDEs relates to the stability
+theory we have already developed for time-dependent ODEs, it is easiest to first
+consider the so-called method of lines (MOL) discretization of the PDE, which is a
+semidiscrete method.
+For example, we might discretize the heat equation in space at grid point xi by
+ˆ
+˙
+1
+Ui1 ptq “ 2 Ui´1 ptq ´ 2Ui ptq ` Ui`1 ptq
+for i “ 1, 2, ¨ ¨ ¨ , m,
+h
+where prime now means differentiationwith respect to time. We can view this as a
+coupled system of m ODEs for the variables Ui ptq , which vary continuously in time
+along the lines shown in figure on next page.
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+18 / 54
+
+Ui (t) is the solution at the grid point xi
+
+Ui ptq is the solution at the grid point xi
+
+U0 .t/
+
+U1 .t/
+
+U2 .t/
+
+Um�1 .t/
+
+UmC1 .t/
+
+x0
+
+x1
+
+x2
+
+xm�1 xm
+
+xmC1
+
+t
+
+Ui (Ut)ptq
+is is
+the
+solution
+point xxi.
+Figura:
+the
+solutionalong
+alongthe
+theline
+lineforward
+forwardin
+intime
+time at
+at the
+the grid
+grid point
+i
+i
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+19 / 54
+
+Initial value problem (IVP)
+This system can be written as the following IVP:
+U1 ptq “ AUptq ` gptq,
+
+Ui p0q “ ηpxi q 1 ď i ď m,
+
+where the tridiagonal matrix A is exactly in (2.9) and gptq includes the terms needed
+for the boundary conditions, U0 ptq ” g0 ptq and Um`1 ptq ” g1 ptq,
+»
+´2
+—1
+—
+—
+1 —
+A“ 2—
+h —
+—
+—
+–
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+1
+´2
+1
+
+fi
+1
+´2
+..
+.
+
+1
+..
+.
+1
+
+..
+
+.
+´2
+1
+
+SME0202
+
+ffi
+ffi
+ffi
+ffi
+ffi ,
+ffi
+ffi
+ffi
+1 fl
+´2
+
+»
+fi
+g0 ptq
+— 0 ffi
+—
+ffi
+— 0 ffi
+ffi
+1 —
+.
+gptq “ 2 —
+.. ffi
+—
+h — . ffi
+ffi
+—
+ffi
+– 0 fl
+g1 ptq
+
+20 / 54
+
+Discretizations of the IVP
+The MOL approach has the advantage of being relatively easy to apply to a fairly
+general set of time-dependent PDEs, but the resulting method is often not as
+efficient as specially designed methods for the PDE. As a tool in understanding
+stability theory, however, the MOL discretization is extremely valuable
+Applying forward Euler’s method to
+ˆ
+˙
+1
+Ui1 ptq “ 2 Ui´1 ptq ´ 2Ui ptq ` Ui`1 ptq
+h
+
+for i “ 1, 2, ¨ ¨ ¨ , m,
+
+we have the fully discrete method, the forward difference method:
+Uin`1 “ Uin `
+
+˘
+k` n
+n
+U
+´ 2Uin ` Ui`1
+.
+h2 i´1
+
+Similarly, applying the trapezoidal method results in the CN method:
+ˆ
+˙
+k
+n`1
+n`1
+n`1
+n`1
+n
+n
+n
+n
+Ui
+“ Ui ` 2 Ui´1 ´ 2Ui ` Ui`1 ` Ui´1 ´ 2Ui
+` Ui`1
+2h
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+21 / 54
+
+Stability theory
+We can investigate the stability of schemes like
+Uin`1 “ Uin `
+
+˘
+k` n
+n
+U
+´ 2Uin ` Ui`1
+.
+h2 i´1
+
+or
+k
+Uin`1 “ Uin ` 2
+2h
+
+ˆ
+
+n`1
+n`1
+n
+n
+´ 2Uin ` Ui`1
+` Ui´1
+´ 2Uin`1 ` Ui`1
+Ui´1
+
+˙
+
+since these can be interpreted as standard ODE methods applied to the linear system
+of IVP,
+U1 ptq “ AUptq ` gptq,
+
+Ui p0q “ ηpxi q 1 ď i ď m,
+
+We expect the method to be stable if kλ P S , i.e., if the time step k multiplied by any
+eigenvalue λ of A lies in the stability region S of the ODE method (cf. Section 7.4.2).
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+22 / 54
+
+Remarkson the eigenvalues of matrix A
+
+We have determined the eigenvalues of A in
+λp “
+
+2
+pcosppπhq ´ 1q
+h2
+
+where again m and h are related by h “
+
+for p “ 1, 2, ¨ ¨ ¨ , m,
+
+1
+.
+m`1
+
+Note that there is a new wrinkle here relative to the ODEs: the eigenvalues λp depend
+on the mesh width h. As we refine the grid and h Ñ 0, the dimension of A increases,
+the number of eigenvalues we must consider increases, and the values of the
+eigenvalues change.
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+23 / 54
+
+Absolute stability region
+We consider the following simple IVP:
+u1 ptq “ λuptq,
+
+upt0 q “ η.
+
+Forward Euler’s method applied to this problem gives
+Un`1 “ p1 ` kλqUn .
+
+We say that the method is absolutely stable when |1 ` kλ| ď 1; otherwise it is
+unstable.
+Let z :“ kλ. Then the method is absolutely stable whenever ´2 ď z ď 0 and we
+say the interval of absolute stability for Euler’s method is r´2, 0s.
+It is more common to speak of the region of absolute stability as a region in the
+complex z plane, allowing the possibility that λ is complex (k ą 0 is the time
+step).
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+24 / 54
+
+ability region of some methods for IVP
+
+Stability region of some methods for IVP
+Forward Euler
+
+(a)
+
+Backward Euler
+
+2
+
+2
+
+1.5
+
+1.5
+
+1
+
+1
+
+0.5
+
+0.5
+
+0
+
+0
+
+−0.5
+
+−0.5
+
+−1
+
+−1
+
+−1.5
+
+−1.5
+
+−2
+−3
+
+−2
+
+−1
+
+0
+
+1
+
+(b)
+
+−2
+−1
+
+0
+
+Trapezoidal
+
+(c)
+
+2
+
+1.5
+
+1.5
+
+1
+
+1
+
+0.5
+
+0.5
+
+0
+
+0
+
+−0.5
+
+−0.5
+
+−1
+
+−1
+
+−1.5
+
+−1.5
+−1
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+0
+
+2
+
+3
+
+1
+
+2
+
+Midpoint
+
+2
+
+−2
+−2
+
+1
+
+1
+
+2
+
+(d)
+SME0202
+
+−2
+−2
+
+−1
+
+0
+
+25 / 54
+
+Absolute stability for linear systems
+Consider the general linear system u1 “ Au with constant m ˆ m matrix A. For
+simplicity, assume that A is diagonalizable, i.e., there exists linearly independent
+eigenvectors rp such that Arp “ λp rp for p “ 1, 2, ¨ ¨ ¨ , m.
+Let R “ rr1 , r2 , ¨ ¨ ¨ , rm s and Λ “ diagpλ1 , λ2 , ¨ ¨ ¨ , λm q. Then we have A “ RΛR´1 and
+Λ “ R´1 AR.
+Now, the idea lies in transforming u1 “ Au to an equivalent system v1 “ Λv with
+diagonal Λ by introducing vptq “ R´1 uptq.
+v1 “ R´1 u1 “ R´1 Au “ R´1 rRΛR´1 su “ ΛR´1 u “ Λv.
+This equivalent system is then decoupled into m independent scalar equations. The
+pth such equation is v1p ptq “ λp vp ptq and the corresponding Euler’s method is
+Vpn`1 “ p1 ` kλp qVpn .
+
+For the overall method to be stable, each of the scalar problems must be stable, and
+this clearly requires that kλp be in the stability region of Euler’s method for all values
+of p, i.e., |1 ` kλp | ď 1, @ p.
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+26 / 54
+
+Example (Forward difference method)
+If we use Euler’s method to obtain the discretization
+Uin`1 “ Uin `
+
+˘
+k` n
+n
+Ui´1 ´ 2Uin ` Ui`1
+.
+2
+h
+
+then we must require |1 ` kλ| ď 1 for each eigenvalue. Since the one farthest from the
+origin is
+4
+2
+λm “ 2 pcospmπhq ´ 1q « ´ 2 ,
+h
+h
+we require ´2 ď ´4k{h2 ă 0. This limits the time step allowed to
+1
+k
+ď .
+2
+h2
+This is a severe restriction: the time step must decrease at the rate of h2 as we refine
+the grid, which is much smaller than the spatial width h when h is small.
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+27 / 54
+
+Example (Crank-Nicolson method)
+If we apply the trapezoidal method to the IVP
+U1 ptq “ AUptq ` gptq,
+
+Ui p0q “ ηpxi q 1 ď i ď m,
+
+we obtain the Crank-Nicolson method,
+Uin`1 “ Uin `
+
+ˆ
+˙
+k
+n`1
+n`1
+n`1
+n
+n
+n
+U
+´
+2U
+`
+U
+`
+U
+´
+2U
+`
+U
+i´1
+i
+i`1
+i´1
+i
+i`1 .
+2h2
+
+The trapezoidal method for the ODE is absolutely stable in the whole left half-plane
+and the eigenvalues
+λp “
+
+2
+pcosppπhq ´ 1q
+h2
+
+for p “ 1, 2, ¨ ¨ ¨ , m,
+
+are always negative. Hence the Crank-Nicolson method is stable for any time step
+k ą 0, i.e. it is unconditionally stable!
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+28 / 54
+
+Stiffness
+
+In mathematics, a stiff equation is a differential equation for which certain numerical
+methods for solving the equation are numerically unstable, unless the step size is
+taken to be extremely small. It has proven difficult to formulate a precise definition of
+stiffness, but the main idea is that the equation includes some terms that can lead to
+rapid variation in the solution. - Wikipedia
+
+Example
+Consider the IVP with λ ! ´1,
+u1 ptq “ λuptq,
+
+upt0 q “ η.
+
+The the IVP is a stiff problem, since the forward Euler’s method applied to this
+problem is unstable unless the time step k ! 1.
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+29 / 54
+
+Stiffness of the heat equation
+Note that the IVP for the system of ODEs,
+U1 ptq “ AUptq ` gptq,
+
+Ui p0q “ ηpxi q 1 ď i ď m,
+
+we are solving is quite stiff, particularly for small h. The eigenvalues of A are given by
+λp “
+
+2
+pcosppπhq ´ 1q
+h2
+
+for p “ 1, 2, ¨ ¨ ¨ , m,
+
+The smallest and largest eigenvalues in magnitude of matrix A are
+ˆ
+˙
+2
+pπhq2
+pπhq4
+π4 2
+1
+´
+`
+´
+.
+.
+.
+´
+1
+« ´π 2 `
+h ,
+2
+2
+24
+12
+h
+4
+λm « ´ 2 ,
+h
+λ1 «
+
+as h is small. The “stiffness ratio ” of the system is π24h2 , which grows rapidly as h Ñ 0.
+As a result the explicit Euler method is stable only for very small time steps k ď h2 {2.
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+30 / 54
+
+Stiffness of the heat equation (cont.)
+The stiffness is a reflection of the very different time scales present in solutions
+to the physical problem modeled by the heat equation. High frequency spatial
+oscillations in the initial data will decay very rapidly, while smooth data decay
+much more slowly. See the figures on next page.
+The exact solution of the heat equation on 0 ă x ă 1 with g0 ptq “ g1 ptq ” 0 can
+be represented as a Fourier sine series:
+upx, tq “
+
+8
+ÿ
+
+ûj sinpjπxq,
+
+j“1
+
+where û1j ptq “ ´j2 π 2 ûj ptq for j “ 1, 2, ¨ ¨ ¨ and so
+2
+
+2
+
+ûj “ e´j π t ûj p0q.
+A method that requires k « h2 forces us to take a much finer temporal
+discretization than we should need to represent smooth solutions. If h “ 0.001,
+for example, then if we must take k “ h2 rather than k “ h we would need to
+take 1000 time steps to cover each time interval that should be well modeled by
+a single time step. This is the difficulty we encountered with stiff ODEs.
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+31 / 54
+
+Stiffness of the heat equation (cont.)
+
+Stiffness of the heat equation (cont.)
+u1 .x; t1 /
+
+3
+
+x
+
+4
+
+5
+
+6
+
+1.0
+1
+
+2
+
+x
+
+4
+
+5
+
+6
+
+0
+
+2
+
+3
+
+x
+
+4
+
+5
+
+6
+
+3
+
+x
+
+4
+
+5
+
+6
+
+0
+
+4
+
+5
+
+6
+
+6
+
+1
+
+2
+
+3
+
+x
+
+4
+
+5
+
+6
+
+5
+
+6
+
+1.0
+
+1.0
+
+0.5
+
+u
+
+u
+
+0.0
+
+-0.5
+
+-0.5
+
+x
+
+5
+
+u3 .x; t2 /
+
+-1.0
+
+-1.0
+3
+
+4
+
+0.5
+
+u
+2
+
+0.5
+
+1.0
+0.5
+0.0
+-0.5
+
+2
+
+x
+
+-0.5
+1
+
+u3 .x; t1 /
+
+-1.0
+
+1
+
+3
+
+-1.0
+0
+
+u3 .x; t0 /
+
+0
+
+2
+
+1.0
+
+1.0
+u
+0.0
+-0.5
+-1.0
+1
+
+1
+
+u2 .x; t2 /
+
+0.5
+
+1.0
+0.5
+0.0
+-0.5
+
+u
+
+3
+
+u2 .x; t1 /
+
+-1.0
+0
+
+0.0
+
+u
+0
+
+u2 .x; t0 /
+
+0.0
+
+2
+
+0.0
+
+1
+
+-1.0
+
+-1.0
+
+-0.5
+
+-0.5
+
+u
+
+0.0
+
+0.5
+
+0.5
+
+1.0
+0.5
+
+u
+
+0.0
+-0.5
+-1.0
+0
+
+u
+
+u1 .x; t2 /
+
+1.0
+
+u1 .x; t0 /
+
+0
+
+1
+
+2
+
+3
+
+x
+
+4
+
+5
+
+6
+
+0
+
+1
+
+2
+
+3
+
+4
+
+x
+
+Figura: Solutions
+to the
+heat
+equation
+for0 0<ă
+x 1ăand
+1 and
+Solutions
+to the
+heat
+equation for
+x<
+g0 (t)g=0 ptq
+g1 (t“
+) ≡g10ptq ” 0 at
+three(columns)
+different times
+(columns)
+shown different
+for three different
+three differentattime
+shown
+for three
+sets ofsets
+initial
+of initial conditions (rows)
+conditions (rows)
+Suh-Yuh Yang (楊肅煜), Math. Dept., NCU, Taiwan .
+Diffusion Equations and Parabolic Problems – 32/54
+Prof. Fabricio S. Sousa (ICMC-USP)
+SME0202
+
+32 / 54
+
+Convergence analysis
+
+The methods we have studied so far can be written in the form
+Un`1 “ BpkqUn ` bn pkq
+
+p˚q
+
+for some matrix Bpkq P Rmˆm on a grid with h “ 1{pm ` 1q and bn pkq P Rm .
+In general these depend on both k and h, but we will assume some fixed rule is
+specified relating h to k as k Ñ 0. For example, we fix k “ 0.4h2 for forward difference
+method and fix k “ h for the Crank-Nicolson method
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+33 / 54
+
+Example
+For example, applying forward Euler to the MOL system
+U1 ptq “ AUptq ` gptq,
+gives Bpkq “ I ` kA, where A is the tridiagonal matrix in
+»
+´2
+—1
+—
+—
+1 —
+A“ 2—
+h —
+—
+—
+–
+
+1
+´2
+1
+
+fi
+1
+´2
+..
+.
+
+1
+..
+.
+1
+
+..
+
+.
+´2
+1
+
+ffi
+ffi
+ffi
+ffi
+ffi ,
+ffi
+ffi
+ffi
+1 fl
+´2
+
+»
+fi
+g0 ptq
+— 0 ffi
+—
+ffi
+— 0 ffi
+ffi
+1 —
+gptq “ 2 —
+.
+.. ffi
+—
+h — . ffi
+ffi
+—
+ffi
+– 0 fl
+g1 ptq
+
+The Crank-Nicolson method results from applying the trapezoidal method to
+U1 ptq “ AUptq ` gptq, which gives
+ˆ
+Bpkq “
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+k
+I´ A
+2
+
+˙´1 ˆ
+
+SME0202
+
+˙
+k
+I` A .
+2
+34 / 54
+
+Lax Equivalence Theorem
+To prove convergence we need consistency and a suitable form of stability. As usual,
+consistency requires that the local truncation error vanishes as k Ñ 0. The form of
+stability that we need is often called Lax-Richtmyer stability
+
+Definition
+A linear method of the form Un`1 “ BpkqUn ` bn pkq is Lax-Richtmyer stable if, for
+each time T, there is a constant CT ą 0 such that
+Bpkqn ď CT
+for all k ą 0 and integers n for which kn ď T.
+
+Lax Equivalence Theorem
+A consistent linear method of the form Un`1 “ BpkqUn ` bn pkq is convergent if and
+only if it is Lax-Richtmyer stable.
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+35 / 54
+
+Main idea of the proof ( ð)
+If we apply the numerical method to the exact solution upx, tq, we obtain
+un`1 “ Bun ` bn ` kτ n ,
+
+p˚˚q
+
+where we suppress the dependence on k for clarity and where
+fi
+upx1 , tn q
+— upx , t q ffi
+—
+2 n ffi
+ffi ,
+un “ —
+..
+—
+ffi
+–
+fl
+.
+upxm , tn q
+»
+
+fi
+τpx1 , tn q
+— τpx , t q ffi
+—
+2 n ffi
+ffi .
+τn “ —
+..
+—
+ffi
+–
+fl
+.
+τpxm , tn q
+»
+
+Subtracting p˚˚q from p˚q gives the difference equation for the global error
+En :“ Un ´ un ,
+En`1 “ BEn ´ kτ n .
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+36 / 54
+
+Main idea of the proof (ð )
+After N time steps, we have
+EN “ BN E0 ` k
+
+N
+ÿ
+
+BN´n τ n´1 ,
+
+n“1
+
+from which we obtain
+EN ď BN
+
+E0 ´ k
+
+N
+ÿ
+
+BN´n
+
+τ n´1 .
+
+n“1
+
+If the method is Lax-Richtmyer stable, then for Nk ď T,
+EN ď CT E0 ` TCT max
+
+1ďnďN
+
+τ n´1 Ñ 0
+
+as k Ñ 0 for Nk ď T,
+
+provided the method is consistent (kτ k Ñ 0) and we use appropriate initial data
+( E0 Ñ 0 as k Ñ 0).
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+37 / 54
+
+The forward difference method is convergent with
+global error Oph2 q , provided k ď h2 {2
+For the heat equation the matrix A is symmetric,
+»
+´2
+—1
+—
+—
+1 —
+A“ 2—
+h —
+—
+—
+–
+
+1
+´2
+1
+
+fi
+1
+´2
+..
+.
+
+1
+..
+.
+1
+
+..
+
+.
+´2
+1
+
+ffi
+ffi
+ffi
+ffi
+ffi .
+ffi
+ffi
+ffi
+1 fl
+´2
+
+The matrix B :“ I ` kA is symmetric and hence the 2-norm is equal to the
+spectral radius.
+Thus, kBk2 ď 1, provided k ď h2 {2 is satisfied. So the forward difference method
+is Lax-Richtmyer stable and hence convergent under this restriction on the time
+step.
+The global error is Oph2 q.
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+38 / 54
+
+The Crank-Nicolson method is convergent with global
+error Oph2 q, provided k “ h:
+The matrix
+
+ˆ
+˙´1 ˆ
+˙
+k
+k
+I´ A
+I` A .
+2
+2
+is symmetric and has eigenvalues
+Bpkq “
+
+1 ` kλp {2
+1 ´ kλp {2
+
+p “ 1, 2 ¨ ¨ ¨ , m,
+
+e
+
+ˇ
+ˇ
+ˇ 1 ` kλp {2 ˇ
+ˇ
+ˇ
+ˇ 1 ´ kλp {2 ˇ for all p.
+So the Crank-Nicolson method is stable in the 2-norm if k “ h and then the
+global error is Oph2 q.
+
+For the two methods considered so far we have obtained kBk ď 1. This is called
+strong stability. If there is a constant α such that kBk ď 1 ` αk holds in some
+norm, then we will have Lax-Richtmyer stability in this norm, since
+Bn ď p1 ` αkqn ď eaT
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+for nk ď T.
+39 / 54
+
+Von Neumann analysis
+The von Neumann approach to stability analysis is based on Fourier analysis
+and hence is generally limited to constant coefficient linear PDEs.
+For simplicity it is usually applied to the Cauchy problem, which is the PDE on
+all space with no boundaries, ´8 ă x ă 8 in the 1-D case.
+The von Neumann analysis can also be used to study the stability of problems
+with periodic boundary conditions, e.g., in 0 ă x ă 1 with up0, tq “ up1, tq
+imposed. This is generally equivalent to a Cauchy problem with periodic initial
+data.
+Fourier analysis allows us to obatin simple scalar recursions for each wave
+number (frequency) separately, rather than dealing with a system of equations
+that couples together all values of j.
+The underlying physical meaning is that, for a stable scheme, the energy of
+every frequency components will independently decay to zero as time evoles.
+Moreover, highly oscillatory components decay much faster than those with low
+wave numbers.
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+40 / 54
+
+Basic concepts of Fourier transform
+Before formally introducing the von Neumann approach to stability analysis, we
+briefly review some basic concepts of Fourier transform.
+ş8
+If vpxq P L2 pRq, i.e., ( ´8 kvk2 :“ p|vpxq|2 dxq1{2 ă 8. Then vpxq can be expressed
+as a linear combination of the set of basis functions teiξx , ξ P Ru of L2 pRq in the
+following form:
+ż8
+1
+vpxq “ ?
+v̂pξqeiξx dξ.
+2π ´8
+The set of projection coefficients v̂pξq is known as the Fourier transform of vpxq,
+which can be computed as:
+ż8
+1
+vpxqe´iξx dx,
+v̂pξq “ ?
+2π ´8
+the L2 inner product of vpxq and eiξx .
+In fact, the linear transformation between vpxq and v̂pξq is isometric. It can be
+proved that kvk2 “ kv̂k2 , namely, the Fourier transform is norm-preserving. This
+is known as Parseval’s relation.
+The Fourier transform of vpx ´ xq equals e´iξx v̂pξq, for any shifting point x This
+is known as Translation rule of Fourier transform.
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+41 / 54
+
+Basic concepts of Fourier transform (cont.)
+
+Now suppose Vj is sampled from vpxq P L2 pRq at grid points xj “ jh for
+j “ 0, ˘1, ˘2, ¨ ¨ ¨ , which can be considered as a discrete version of vpxq and is usually
+called a grid function. Similar Fourier results and properties hold just as in
+thecontinuous case:
+ř
+2 1{2 ă 8. Then V can be expressed as a
+If Vj P l2 pZq, i.e., kV k2 :“ ph 8
+j
+j“´8 |Vj | q
+linear combination of teipjhqξ , ´π{h ď ξ ď π{hu
+ż pi{h
+1
+V̂pξqeipjhqξ dξ,
+Vj “ ?
+2π ´π{h
+
+where
+V̂pξq “
+
+8
+h ÿ
+Vj e´ipjhqξ ,
+2h
+j“´8
+
+the l2 inner product of Vj and eipjhqξ . Notice that the wave number (frequency)
+π{h Ñ 8 as mesh size h Ñ 0.
+The linear transformation between Vj and V̂pξq is also norm-preserving. The
+following discrete version of Parseval’s relation holds:
+ˆ ÿ
+˙1{2
+ˆ ż π{h
+˙1{2
+8
+|Vj |2
+V̂ :“
+|V̂pξq|2 dξ
+.
+kV k2 :“ h
+2
+
+j“´8
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+´π{h
+
+42 / 54
+
+Von Neumann analysis (cont.)
+To show that a finite difference method Un`1 “ BpkqUn ` bn pkq
+is stable in the 2-norm, we would have to show that
+Un`1
+
+2
+
+ď p1 ` αkq Un 2
+
+p˚q
+
+@n.
+
+However, this can be difficult to attack directly. Alternatively one can work with
+the matrix B itself, but this matrix is growing as we refine the grid.
+Since kUn k2 “ Ûn
+
+2
+
+, it is sufficient to instead show that
+Ûn`1
+
+2
+
+ď p1 ` αkq Ûn
+
+2
+
+@n.
+
+Furthermore, Fourier transforming both sides of p˚q and applying the
+translation rule gives
+Ûn`1 pξq “ gpξqÛn pξq,
+where the factor gpξq depends on the method, namely, the matrix Bpkq itself.
+If we can show that
+|gpξq| ď 1 ` αk,
+where α is independent of ξ; then it follows that the method is stable, since
+|Ûjn`1 pξq| ď p1 ` αkq|Ûjn pξq| @ξ.
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+43 / 54
+
+The forward difference method
+Consider the forward difference method,
+Ujn`1 “ Ujn `
+
+˘
+k` n
+n
+U
+´ 2Ujn ` Uj`1
+.
+h2 j´1
+
+p˚q
+
+To apply von Neumann analysis we consider how this method works on a single
+wave number ξ ‰ 0, i.e., we set Ujn “ eijhξ . Then we expect that
+Ujn`1 “ gpξqeijhξ ,
+where gpξq is the amplification factor for this wave number. Inserting these
+expressions into p˚q gives
+ˆ
+˙
+k
+gpξqeijhξ “ eijhξ ` 2 eiξpj´1q ´ 2eijhξ ` eiξpj`1qh
+h
+ˆ
+˙
+˘
+k ` ´ihξ
+“ 1` 2 e
+´ 2 ` ejhξ eijhξ ,
+h
+and hence
+gpξq “ 1 `
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+2k
+h2
+
+ˆ
+
+˙
+cospξhq ´ 1 .
+
+SME0202
+
+44 / 54
+
+The forward difference method (cont.)
+Since ´1 ă cospξhq ă 1 for any value of ξ ‰ 0, we see that
+1´
+
+4k
+ă gpξq ă 1
+h2
+
+for all ξ ‰ 0. We can guarantee that |gpξq| ď 1 for all ξ ‰ 0 if we require
+4k
+ď 2.
+h2
+This is exactly the stability restriction
+kď
+
+h2
+2
+
+we found earlier for this method.
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+45 / 54
+
+The Crank-Nicolson method
+The fact that the Crank-Nicolson method is stable for all k and h can also be shown
+using von Neumann analysis. Substituting Ujn “ eijhξ and Ujn`1 “ gpξqeijhξ into the
+difference equation
+ˆ
+˙
+k
+n`1
+n`1
+n
+n
+´ 2Ujn ` Uj`1
+` Uj´1
+´ 2Ujn`1 ` Uj`1
+Ujn`1 “ Ujn ` 2 Uj´1
+2h
+and canceling the common factor of eijhξ gives the following relation for g “ gpξq:
+ˆ
+˙
+k
+g “ 1 ` 2 e´ihξ ´ 2 ` ejhξ p1 ` gq ,
+2h
+and hence g “
+
+1 ` 12 z
+1 ´ 12 z
+
+, where
+
+z“
+
+ˆ
+˙
+ˆ
+˙
+k
+2k
+´ihξ
+jhξ
+e
+´
+2
+`
+e
+“
+cospξhq
+´
+1
+.
+h2
+h2
+
+Since z ă 0 for all ξ ‰ 0, we see that |g| ď 1 and the method is stable for any choice of
+k and h.
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+46 / 54
+
+Multidimensional problems
+In two space dimensions the heat equation takes the form
+ut “ uxx ` uyy for px, yq P Ω :“ p0, 1q ˆ p0, 1q, t ą 0
+with ICs upx, y, 0q “ ηpx, yq and BCs all along the boundary of our spatial domain Ω.
+We can discretize in space using the 5-point Laplacian,
+ˆ
+˙
+1
+∇2h Uij “ 2 Ui´1,j ` Ui`1,j ` Ui,j´1 ` Ui,j`1 ´ 4Uij , 1 ď i, j ď m
+h
+If we then discretize in time using the trapezoidal method, we will obtain the 2-D
+version of the Crank-Nicolson method,
+˙
+ˆ
+k
+Uijn`1 “ Uijn `
+∇2h Uijn ` ∇2h Uijn`1 , 1 ď i, j ď m
+2
+We can rewrite the equations as
+ˆ
+˙
+ˆ
+˙
+k 2
+k 2
+n`1
+1 ´ ∇h Uij “ 1 ` ∇h Uijn ,
+2
+2
+or in matrix form,
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+ˆ
+
+˙
+˙
+ˆ
+k 2
+k 2
+n`1
+1 ´ ∇h U
+“ 1 ` ∇h U n .
+2
+2
+SME0202
+
+47 / 54
+
+Multidimensional problems
+k
+Let A “ I ´ ∇2h . The matrix A has the same pattern of nonzeros as the matrix for ∇2h
+2
+but the values are scaled by k{2 and then subtracted from the identity matrix. We find
+that the eigenvalues of A are (h :“ 1{pm ` 1q )
+ˆ
+˙
+k
+λp,q “ 1 ´ 2 pcosppπhq ´ 1q ` pcospqπhq ´ 1q ą 0 for p, q “ 1, 2, ¨ ¨ ¨ , m
+h
+The largest and smallest eigenvalues of the matrix A are given by
+ˆ
+˙
+k
+4k
+λm,m « 1 ´ 2 ´ 2 ´ 2 “ 1 ` 2 “ Opk{h2 q,
+h
+h
+ˆ
+˙
+2
+2
+4
+4
+π h
+π h
+2k
+λ1,1 “ 1 ´ 2 1 ´
+`
+` ¨ ¨ ¨ ´ 1 “ 1 ` π 2 k ` Opkh2 q “ 1 ` Opkq.
+2
+24
+h
+As a result the condition number of A is
+κ2 pAq “ kAk2 A´1
+
+2
+
+“
+
+λm,m
+“ Opkh´2 q.
+λ1,1
+
+By contrast, the ∇2h alone has condition number O ( h´2 ) . The smaller condition
+number in the present case can be expected to lead o faster convergence of iterative
+methods.
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+48 / 54
+
+Initia values for an iterative method
+We have excellent starting guesses for Un`1 to the Crank-Nicolson method,
+ˆ
+˙
+k
+∇2h Uijn ` ∇2h Uijn`1 , 1 ď i, j ď m.
+Uijn`1 “ Uijn `
+2
+Since Uijn`1 “ Uijn ` Opkq, we can use Uijn , the values from the previous time
+r0s
+
+step,as the initial values Uij for an iterative method.
+We might do even better by extrapolating forward in time, using
+Uij “ 2Uijn ´ Uijn´1 ,
+r0s
+
+or by using an explicit method (forward Euler),
+Uij “ p1 ` k∇2h qUijn .
+r0s
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+49 / 54
+
+The locally one-dimensional (LOD) method
+Rather than solving the coupled sparse matrix equation for all the unknowns
+ˆ
+˙
+ˆ
+˙
+ˆ
+˙
+k 2
+k 2
+k
+n`1
+n`1
+2 n
+2 n`1
+n
+or
+1 ´ ∇h Uij “ 1 ` ∇h Uijn ,
+∇h Uij ` ∇h Uij
+Uij “ Uij `
+2
+2
+2
+for 1 ď i, j ď m, an alternative approach is the locally one-dimensional (LOD) method:
+ˆ
+˙
+k
+D2x Uijn ` D2x Uij˚ , (CN method for ut “ uxx q
+2
+ˆ
+˙
+k
+Uijn`1 “ Uij˚ `
+D2y Uij˚ ` D2y Uijn`1 , (CN method for ut “ uyy q
+2
+Uij˚ “ Uijn `
+
+or in matrix form,
+˙
+ˆ
+˙
+k
+k
+1 ´ D2x U˚ “ 1 ` D2x Un ,
+2
+2
+ˆ
+˙
+ˆ
+˙
+k 2
+k
+1 ´ Dy Un`1 “ 1 ` D2y U˚ .
+2
+2
+ˆ
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+50 / 54
+
+Boundary conditions
+
+In solving the second set of systems
+ˆ
+˙
+k
+D2y Uij˚ ` D2y Uijn`1 ,
+Uijn`1 “ Uij˚ `
+2
+
+1 ď i, j ď m,
+
+˚ and Un`1 along the bottom boundary and U˚
+we need boundary values Ui0
+i0
+i,m`1
+n`1
+and Ui,m`1
+along the top boundary, for terms that go on the right-hand side of
+each tridiagonal system.
+˚ and U˚
+To obtain the values Ui0
+i,m`1 , we solve the first part
+
+Uij˚ “ Uijn `
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+ˆ
+˙
+k
+D2x Uijn ` D2x Uij˚ ,
+2
+
+SME0202
+
+for j “ 0, m ` 1.
+
+51 / 54
+
+Boundary conditions (continued)
+In solving the first set of systems
+ˆ
+˙
+k
+Uij˚ “ Uijn `
+D2x Uijn ` D2x Uij˚ ,
+2
+
+for 1 ď i, j ď m.
+
+˚ and Un along the left boundary and values U˚
+we need boundary values U0j
+0j
+m`1,j
+n
+and Um`1,j along the right boundary.
+˚ and U˚
+To determine proper values for U0j
+m`1,j , we can use
+
+ˆ
+˙
+k
+Uijn`1 “ Uij˚ `
+D2y Uij˚ ` D2y Uijn`1 , for i “ 0, m ` 1.
+2
+˙
+ˆ
+˙
+ˆ
+k
+k
+ùñ 1 ` D2y Uij˚ “ 1 ´ D2y Uijn`1 , for i “ 0, m ` 1.
+2
+2
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+52 / 54
+
+Physically the LOD method corresponds to modeling diffusion in the x´ and y´
+directions over time k as a decoupled process in which u is allowed to diffuse
+only in the x´ direction and then only in the y´ direction.
+For the constant coefficient diffusion problem, it can be shown that this
+alternating diffusion approach gives exactly the same behavior as the original
+two-dimensional diffusion (This is because the differential operators Bx2 and By2
+commute).
+Numerically there is much less computational cost using the LOD method than
+the fully coupled C-N method. Taking a single time step requires solving only
+2m ` 2 tridiagonal systems of size m, and thus p2m ` 2q ˆ Opmq “ Opm2 q work,
+which is the optimal order.
+With proper treatment of the boundary conditions, it can be shown that the LOD
+method is second order accurate. It can also be shown that this method, like full
+Crank-Nicolson, is unconditionally stable for any time step k.
+
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+53 / 54
+
+The alternating direction implicit (ADI) method
+A modification of the LOD method is also often used, in which the two steps each
+involve discretization in only one spatial direction at the advanced time level but
+coupled with discretization in the opposite direction at the old time level. The
+classical method of this form is
+ˆ
+˙
+k
+˚
+n
+2 n
+2 ˚
+Uij “ Uij `
+Dy Uij ` Dx Uij ,
+2
+ˆ
+˙
+k
+Uijn`1 “ Uij˚ `
+D2x Uij˚ ` D2y Uijn`1 .
+2
+This is called the alternating direction implicit (ADI) method and was first introduced by
+Douglas and Rachford (Transactions of the AMS, 1956). This again gives decoupled
+tridiagonal systems to solve in each step
+ˆ
+˙
+ˆ
+˙
+k 2
+k 2
+˚
+1 ´ Dx U “ 1 ` Dy U n ,
+2
+2
+ˆ
+˙
+ˆ
+˙
+k 2
+k
+1 ´ Dy Un`1 “ 1 ` D2x U˚ .
+2
+2
+Prof. Fabricio S. Sousa (ICMC-USP)
+
+SME0202
+
+54 / 54
+
+
