@@ -1,0 +1,179 @@
+\documentclass[11pt,a4paper,portuguese]{article}
+
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,decorations.markings,decorations.pathmorphing}
+\usepackage{enumerate}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+\usepackage{hyperref}
+\hypersetup{
+	hidelinks,
+	linkcolor = blue
+} % Changes the link color to black and hides the hideous red border that usually is created
+
+\setcounter{section}{-1}
+
+\begin{document}
+    % Título
+    \vspace{5mm}
+    \rule{0.95\textwidth}{1pt}
+    \vspace{3mm}
+    \begin{center}
+        \textbf{\huge Equações Parabólicas e Hiperbólicas} \\
+        \Large Trabalho 3 \\
+        \large SME0202 Métodos Numéricos em Equações Diferenciais
+    
+        \vspace{8mm}
+        \begin{tabular}{rcl}
+            Cody Stefano Barham Setti &-- &4856322 \\
+            Ian de Holanda Cavalcanti Bezerra &-- &13835412
+        \end{tabular}
+
+    \vspace{8mm}
+    01 de Julho de 2025
+    \end{center}
+
+    \vspace{1mm}
+    \rule{0.95\textwidth}{1pt}
+    \vspace{0.5cm}
+
+    % Corpo do texto
+    \section{Preâmbulo}
+    Neste trabalho, resolvemos a equação de advecção-difusão linear dada por
+    \begin{equation}\label{eq:Advec-Diff-Eq}
+        u_t + u_x = \frac{1}{\mathbb{P}e}u_{xx},
+    \end{equation}
+    onde $x\in[0,15)$ e $t\in[0,12)$, a condição de contorno é periódica (i.e.: $u(0,t)=u(15,t)$) e o valor inicial é dado por:
+    \begin{equation*}
+        u(x,0) = \exp(-20(x-2)^2) + \exp(-(x-5)^2).
+    \end{equation*}
+    Mais especificamente, construímos uma solução numérica baseada em diferenças progressivas para a derivada temporal e centrais para as espaciais. Em seguida, utilizamos um método \emph{upwind}. Em essência, alteramos a discretização do termo advectivo $u_x$ de uma diferença central para uma progressiva.
+
+    Em seguida, aproveitamos os dois métodos para gerar os gráficos da solução fornecida por cada (tridimensionais), assim como curvas de nível (bidimensionais) de $u$ em função de $x$ para $6$ instantes de tempos igualmente espaçados. Mais precisamente, estas imagens foram geradas para quatro números de Peclét distintos: o primeiro para o caso de predominância da difusão ($\mathbb{P}e\ll 1$); o segundo correspondente à ocorrência de advecção e difusão em magnitudes similares ($\mathbb{P}e=1$), e, por fim, o terceiro e, especialmente, o quarto para o caso de predominância da advecção ($\mathbb{P}e\gg 1$). Com tais imagens em mãos, avaliamos a utilidade de ambos os métodos.
+
+    Por fim, conforme pedido, fizemos uma análise das restrições sobre a discretização temporal:
+    \begin{equation*}
+        \text{(i)}\; \Delta t \leq \Delta x \qquad\text{e}\qquad \text{(ii)}\; \Delta t \leq \frac{\Delta x^2}{2{\mathbb{P}e}^{-1}+\Delta x}
+    \end{equation*}
+    em função de $\mathbb{P}e$.
+
+    \section{Diferenças Progressivas no Tempo e Centradas no Espaço}
+    Discretizando a equação (\ref{eq:Advec-Diff-Eq}) por diferenças temporais progressivas e diferenças espaciais centradas, temos o método numérico
+    \begin{equation*}
+        \frac{U^{n+1}_j-U^n_j}{\Delta n} + \frac{U^n_{j+1}-U^n_{j-1}}{2\Delta x} = \frac{1}{\mathbb{P}e}\left(\frac{U^n_{j+1} - 2U^n_j + U^n_{j-1}}{\Delta x^2}\right), \qquad 0 \leq j < N_x.
+    \end{equation*}
+    Portanto, isolando o termo desconhecido, concluímos que o método FTCS (do inglês: \emph{Forward Time, Centered Space}) é dado por:
+    \begin{equation*}
+        U^{n+1}_j = U^n_j - \tfrac{\Delta t}{2\Delta x}\left(U^n_{j+1}-U^n_{j-1}\right) + \tfrac{\Delta t}{\mathbb{P}e\Delta x^2}\left(U^n_{j+1} - 2U^n_j + U^n_{j-1}\right), \qquad 0 \leq j < N_x.
+    \end{equation*}
+    Entretanto, como lidar com os bordos ($j=0$ e $j=N_x-1$)? Como nossa condição de contorno é periódica, temos que
+    $$
+        U^n_{-1} \doteq U^n_{N_x-1} \qquad\text{e}\qquad U^n_{N_x} \doteq U^n_0.
+    $$
+    Logo, mais precisamente, temos o algoritmo:
+    \begin{itemize}
+        \item $j=0$:
+        \begin{equation*}
+            U^{n+1}_0 = U^n_0 - \tfrac{\Delta t}{2\Delta x}\left(U^n_1-U^n_{N_x-1}\right) + \tfrac{\Delta t}{\mathbb{P}e\Delta x^2}\left(U^n_1 - 2U^n_0 + U^n_{N_x-1}\right).
+        \end{equation*}
+
+        \item $j=1,\ldots,N_x-2$:
+        \begin{equation*}
+            U^{n+1}_j = U^n_j - \tfrac{\Delta t}{2\Delta x}\left(U^n_{j+1}-U^n_{j-1}\right) + \tfrac{\Delta t}{\mathbb{P}e\Delta x^2}\left(U^n_{j+1} - 2U^n_j + U^n_{j-1}\right).
+        \end{equation*}
+
+        \item $j=N_x-1$:
+        \begin{equation*}
+            U^{n+1}_{N_x-1} = U^n_{N_x-1} - \tfrac{\Delta t}{2\Delta x}\left(U^n_0-U^n_{N_x-2}\right) + \tfrac{\Delta t}{\mathbb{P}e\Delta x^2}\left(U^n_0 - 2U^n_{N_x-1} + U^n_{N_x-2}\right).
+        \end{equation*}
+    \end{itemize}
+    Para os detalhes da implementação deste método em Python, vide seu código fonte no arquivo \verb|codigo-T3-MNED.ipynb|. Os gráficos gerados pela implementação seguem abaixo.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{imagens/task1.png}
+    \end{figure}
+
+    \section{Método \emph{Upwind} e Curvas de Nível}
+    \begin{enumerate}[(a)]
+        \item 
+        A equação de advecção-difusão de interesse é dada por
+        \begin{equation*}
+            u_t + u_x = \frac{1}{\mathbb{P}e}u_{xx}
+        \end{equation*}
+        Portanto, neste caso, a velocidade de escoamento $a$ é positiva, isto é $a>0$. Nessas condições, o método \emph{upwind} dita que discretizamos $u_t$ por
+        \begin{equation*}
+            \frac{U^t_j-U^t_{j-1}}{\Delta x}\;.
+        \end{equation*}
+        O restante do algoritmo é completamente análogo ao FTCS, logo, sua exposição é omitida. Mais do que isso, na realidade, aproveitamos tal similaridade para agregá-los no mesmo \emph{solver}. Basta apenas um parâmetro adicional para permitir flexibilidade no calculo do termo $u_t$ (via diferenças centradas ou via diferenças progressivas). Novamente, para maiores detalhes sobre tal \emph{solver}, vide seu código fonte, no arquivo \verb|codigo-T3-MNED.ipynb|.
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth]{imagens/task2a.png}
+        \end{figure}
+
+        \textbf{\emph{O que acontece com o método centrado quando $\mathbb{P}e$ é da ordem de centenas? Acontece o mesmo com o método \emph{upwind}? (...) Caso haja diferença, explique o motivo.}}
+
+        \textbf{Resposta:} O método FTCS é sabidamente incondicionalmente instável para a resolução da equação de advecção:
+        \begin{equation*}
+            u_t + au_x = 0.
+        \end{equation*}
+        Portanto, como, para $\mathbb{P}e\gg 1$, a advecção domina nossa EDP de interesse, é natural de se esperar que o método FTCS não convirja à solução real nessas condições. Portanto, seu gráfico patológico não nos preocupa. O método \emph{upwind}, por sua vez, deve atender ao seguinte critério para ser estável na resolução da equação de advecção:
+        \begin{equation*}
+            \Delta t \leq a\Delta x.
+        \end{equation*}
+        Para nossa EDP em particular, isso se reduz a
+        \begin{equation*}
+            \Delta t \leq \Delta x.
+        \end{equation*}
+        Esta condição foi explicitamente exigida na implementação dos métodos. Logo, esperamos que sua solução no contexto de  $\mathbb{P}e\gg 1$ seja razoável, por mais que o método é notório por ser exageradamente dissipativo.
+
+        \item A seguir, $u$ em função de $x$ -- para $6$ instantes de tempo distintos e igualmente espaçados -- conforme a solução numérica fornecida pelo \textbf{método FTCS}. Note que instantes mais distantes foram considerados para o caso $\mathbb{P}e\gg 1$.
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{imagens/task2b-ftcs.png}
+        \end{figure}
+        A seguir, $u$ em função de $x$ -- para $6$ instantes de tempo distintos e igualmente espaçados -- conforme a solução numérica fornecida pelo \textbf{método \emph{upwind}}. Note que instantes mais distantes foram considerados para o caso $\mathbb{P}e\gg 1$.
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{imagens/task2b-upwind.png}
+        \end{figure}
+        \textbf{\emph{Comente as diferenças observadas, e explique porque as mudanças nas soluções ocorrem da forma que foram apresentadas.}}
+
+        \textbf{Resposta:}
+        \begin{itemize}
+            \item $\mathbb{P}e\ll 1$: Com o passar do tempo, o principal fenômeno observado é a equalização na distribuição espacial de $u$. Isto é, o valor de $u$ difunde-se no domínio espacial ao longo do tempo. Tal observação alinha-se com a previsão teórica de que, para $\mathbb{P}e\ll 1$, o comportamento predominante da EDP é o de difusão.
+
+            \item $\mathbb{P}e = 1$: Nesta configuração, a distribuição espacial de $u$ continua sofrendo difusão, por mais que em uma taxa menos acentuada. Todavia, simultaneamente, a distribuição espacial de $u$ também é transladada, isto é, sofre advecção. Novamente, isto alinha-se com a previsão teórica de que, para $\mathbb{P}e=1$, tanto o fenômeno de advecção, quanto o de difusão são notáveis.
+
+            \item $\mathbb{P}e \gg 1$: Nesta configuração, ocorre advecção em grau acentuado. A difusão ainda não é negligenciável, mas isso é mais por culpa dos dois métodos usados do que a EDP. Primeiramente, como já discutido, o método FTCS falha em solucionar problemas fortemente advectivos, como vê-se nas curvas patológicas fornecidas para $\mathbb{P}e=500$, o caso mais fortemente advectivo estudado.
+            
+            Por sua vez, o método \emph{upwind} possui baixa ordem de consistência (apenas primeira ordem). Seria necessário um tamanho de passo espacial irrazoavelmente pequeno para que seus erros (de natureza difusiva) afetassem pouco a solução que tal método fornece.
+        \end{itemize}
+    \end{enumerate}
+
+    \section{Análise das Restrições de Estabilidade}
+    A seguir, um gráfico em escala logarítmica dos valores das restrições $\Delta x$ e $\frac{\Delta x^2}{2{\mathbb{P}e}^{-1}+\Delta x}$ em função de $\mathbb{P}e$.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{imagens/task3.png}
+    \end{figure}
+    \textbf{\emph{Indentifique a partir de qual valor de $\mathbb{P}e$, o valor de cada condição começa ser mais restritivo. Por que isso acontece e quais são as implicações disso no planejamento da escolha adequada de um método para resolver o problema diferencial?}}
+
+    \textbf{Resposta:} Para todo valor de $\mathbb{P}e$ sempre será o caso que
+    \begin{equation*}
+        \frac{\Delta x^2}{2{\mathbb{P}e}^{-1}+\Delta x} < \Delta x.
+    \end{equation*}
+    Logo, de certa forma, considerar ambas as restrições é redundante. Pelo outro lado,
+    \begin{equation*}
+        \lim_{\mathbb{P}e\to+\infty}\frac{\Delta x^2}{2{\mathbb{P}e}^{-1}+\Delta x} = \Delta x.
+    \end{equation*}
+    Portanto, a comparação entre essas restrições dá-nos uma boa noção da transição de um problema rígido, de difusão pura, quando $\mathbb{P}e \ll 1$ e, consequentemente, $\Delta t \approx \frac{\mathbb{P}e\Delta x^2}{2}$, um valor muito menor que $\Delta x$, mostrando como a escolha de métodos explícitos em tal condição é custosa, a um problema não-rígido, de advecção pura, quando $\mathbb{P}e \gg 1$ e, consequentemente, $\Delta t \approx \Delta x$, contexto no qual métodos explícitos são perfeitamente razoáveis.
+    
+\end{document}
