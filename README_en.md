@@ -4,7 +4,7 @@
 
 ---
 
-This repository houses the **projects** for the *Numerical Methods for Differential Equations* course offered by ICMC-USP in 2025.
+This repository contains **projects** from the *Numerical Methods for Differential Equations* course offered by ICMC-USP in 2025.
 
 > ⚠️ **Note:** The repository is natively in **Portuguese**.
 
